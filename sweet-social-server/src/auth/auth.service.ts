@@ -8,6 +8,8 @@ import { Repository } from 'typeorm';
 import { MailService } from 'src/mail/mail.service';
 import { MessageDto } from './dto/message.dto';
 import { AuthDto, RefreshTokenDto, SignOutDto } from './dto/auth.dto';
+import * as bcrypt from 'bcrypt';
+
 @Injectable()
 export class AuthService {
     constructor(
@@ -47,9 +49,13 @@ export class AuthService {
         return true
     }
 
+    private async isValidPassword(pass: string, hash: string): Promise<boolean> {
+        return await bcrypt.compare(pass, hash);
+    }
+
     async signIn(email: string, pass: string): Promise<AuthDto> {
         const user = await this.usersService.findOneByEmail(email);
-        if (user?.password !== pass) {
+        if (!user || !this.isValidPassword(pass, user.password)) {
             throw new UnauthorizedException('Username or password is wrong');
         }
 
@@ -82,7 +88,7 @@ export class AuthService {
             const userId = decoded.sub;
 
             const isVerified = await this.usersService.checkUserIsVerified(userId)
-            if(isVerified) {
+            if (isVerified) {
                 throw new ForbiddenException('User was verified !')
             }
 

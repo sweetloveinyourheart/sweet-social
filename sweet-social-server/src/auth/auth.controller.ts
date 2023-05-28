@@ -14,7 +14,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('sign-in')
   @ApiOperation({ summary: 'Signin with email' })
-  @ApiResponse({ type: AuthDto })
+  @ApiResponse({ type: AuthDto, status: 200 })
   signIn(@Body() signInDto: SignInDto): Promise<AuthDto> {
     return this.authService.signIn(signInDto.email, signInDto.password);
   }
@@ -22,7 +22,7 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   @Post('sign-up')
   @ApiOperation({ summary: 'Register new account' })
-  @ApiResponse({ type: AuthDto })
+  @ApiResponse({ type: AuthDto, status: 201 })
   signUp(@Body() signUpDto: SignUpDto): Promise<AuthDto> {
     return this.authService.signUp(signUpDto)
   }
@@ -30,7 +30,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Get('refresh-token')
   @ApiOperation({ summary: 'Refresh token' })
-  @ApiResponse({ type: RefreshTokenDto })
+  @ApiResponse({ type: RefreshTokenDto, status: 200 })
   refreshToken(@Query('token') token: string): Promise<RefreshTokenDto> {
     return this.authService.refreshToken(token)
   }
@@ -38,7 +38,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Get('verify-account')
   @ApiOperation({ summary: 'Verify account by token' })
-  @ApiResponse({ type: MessageDto })
+  @ApiResponse({ type: MessageDto, status: 200 })
   verifyAccount(@Query('token') token: string): Promise<MessageDto> {
     return this.authService.verifyAccount(token)
   }
@@ -46,7 +46,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Delete('sign-out')
   @ApiOperation({ summary: 'Sign out from application' })
-  @ApiResponse({ type: SignOutDto })
+  @ApiResponse({ type: SignOutDto, status: 200 })
   signOut(@Query('refresh-token') token: string): Promise<SignOutDto> {
     return this.authService.signOut(token)
   }

@@ -1,19 +1,25 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { Profile } from './entities/profile.entity';
 import { UserProfileDto } from './dto/user-dto';
+import { MessageDto } from 'src/auth/dto/message.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
     @InjectRepository(Profile) private readonly profilesRepository: Repository<Profile>
-  ) {
+  ) { }
 
+  private async hashPassword(pass: string): Promise<string> {
+    // Hashing password
+    const saltOrRounds = 10;
+    return await bcrypt.hash(pass, saltOrRounds);
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -27,7 +33,13 @@ export class UsersService {
       throw new BadRequestException('Username already exists.')
     }
 
-    const newUser = this.usersRepository.create(createUserDto)
+    // Hashing password
+    const hash = await this.hashPassword(createUserDto.password)
+
+    const newUser = this.usersRepository.create({
+      ...createUserDto,
+      password: hash
+    })
     await this.usersRepository.save(newUser)
 
     return newUser;
@@ -60,6 +72,16 @@ export class UsersService {
 
   async updateUser(userId: number, updateData: Partial<User>) {
     await this.usersRepository.update({ id: userId }, updateData);
+  }
+
+  async updateProfile(userId: number, updateData: UpdateProfileDto): Promise<MessageDto> {
+    const profile = await this.profilesRepository.findOne({ where: { user: { id: userId } }, relations: ['user'] })
+    if (!profile) {
+      throw new NotFoundException('Profile not found !')
+    }
+
+    await this.profilesRepository.update({ id: profile.id }, updateData)
+    return { message: "Profile updated! " }
   }
 
   async checkUserIsVerified(id: number): Promise<boolean> {
