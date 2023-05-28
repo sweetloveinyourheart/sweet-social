@@ -21,13 +21,13 @@ export class User {
     role: UserRoles
 
     @Column({ default: false })
-    is_verified: boolean
+    isVerified: boolean
 
     @CreateDateColumn()
-    created_at: Date
+    createdAt: Date
 
     @UpdateDateColumn()
-    updated_at: Date
+    updatedAt: Date
 
     @OneToOne(() => Profile, profile => profile.user, { cascade: true })
     @JoinColumn()

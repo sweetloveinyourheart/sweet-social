@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { Profile } from './entities/profile.entity';
+import { UserProfileDto } from './dto/user-dto';
 
 @Injectable()
 export class UsersService {
@@ -32,6 +33,23 @@ export class UsersService {
     return newUser;
   }
 
+  async getUserProfile(id: number): Promise<UserProfileDto> {
+    const user = await this.usersRepository.findOne({ relations: ['profile'], where: { id } });
+    const userProfile: UserProfileDto = {
+      email: user.email,
+      isVerified: user.isVerified,
+      profile: {
+        username: user.profile.username,
+        name: user.profile.name,
+        avatar: user.profile.avatar,
+        bio: user.profile.bio,
+        gender: user.profile.gender
+      }
+    }
+
+    return userProfile
+  }
+
   async findOneById(id: number): Promise<User> {
     return await this.usersRepository.findOne({ relations: ['profile'], where: { id } });
   }
@@ -45,7 +63,7 @@ export class UsersService {
   }
 
   async checkUserIsVerified(id: number): Promise<boolean> {
-    const { is_verified } = await this.usersRepository.findOneBy({ id })
-    return is_verified
+    const { isVerified } = await this.usersRepository.findOneBy({ id })
+    return isVerified
   }
 }

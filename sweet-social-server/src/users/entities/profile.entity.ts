@@ -28,10 +28,10 @@ export class Profile {
     gender: Gender
 
     @CreateDateColumn()
-    created_at: Date
+    createdAt: Date
 
     @UpdateDateColumn()
-    updated_at: Date
+    updatedAt: Date
 
     @OneToOne(() => User, user => user.profile)
     user: User;

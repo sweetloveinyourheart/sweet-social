@@ -86,7 +86,7 @@ export class AuthService {
                 throw new ForbiddenException('User was verified !')
             }
 
-            await this.usersService.updateUser(userId, { is_verified: true })
+            await this.usersService.updateUser(userId, { isVerified: true })
 
             return { message: 'Verify successfully' }
         } catch (error) {
