@@ -1,0 +1,51 @@
+.auth {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    height: 100vh;
+}
+
+.auth-form {
+    border: 1px solid #dcdcdc;
+    padding: 24px;
+    border-radius: 8px;
+    width: 350px;
+
+    .oauth-btn {
+        width: 100%;
+
+        &:hover {
+            border-color: #f30606;
+            color: #f30606;
+        }
+
+        svg {
+            color: #f30606;
+        }
+    }
+
+    .oauth-btn-link {
+        color: #f30606;
+        width: 100%;
+        font-weight: 500;
+
+        &:hover {
+            color: #f30606;
+            border-color: transparent;
+        }
+
+        svg {
+            color: #f30606;
+        }
+    }
+}
+
+.auth-switcher {
+    margin-top: 24px;
+    border: 1px solid #dcdcdc;
+    padding: 24px;
+    width: 350px;
+    text-align: center;
+}
