@@ -45,6 +45,6 @@ export async function verifyToken(token: string): Promise<MessageResponse> {
 }
 
 export async function signout(refreshToken: string): Promise<MessageResponse> {
-    const { data } = await axios.post(`${BASE_URL}/auth/sign-out?token=${refreshToken}`)
+    const { data } = await axios.delete(`${BASE_URL}/auth/sign-out?token=${refreshToken}`)
     return data
 }

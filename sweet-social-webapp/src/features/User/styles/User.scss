@@ -1,0 +1,62 @@
+.profile {
+    width: 100%;
+
+    @media screen and (min-width: 736px) {
+        width: 935px;
+        margin: 0 auto;
+        padding: 30px 20px 0;
+    }
+
+    .profile-title {
+        display: flex;
+        margin-bottom: 16px;
+
+        h3 {
+            margin: 0;
+        }
+
+        button {
+            margin-left: 12px;
+            color: #222;
+
+            &:last-child {
+                &:hover {
+                    border-color: #fff;
+                    color: #222;
+                }
+            }
+        }
+    }
+
+    .profile-count {
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+
+        .counter {
+            margin-right: 24px;
+
+            button {
+                color: #222;
+
+                &:hover {
+                    border-color: #fff;
+                }
+            }
+        }
+    }
+
+    .profile-name {
+        h5 {
+            margin: 0;
+        }
+    }
+
+    .profile-menu {
+        margin: 24px 0;
+
+        ul {
+            justify-content: center;
+        }
+    }
+}

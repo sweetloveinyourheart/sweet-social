@@ -1,0 +1,36 @@
+.edit-profile {
+    width: 100%;
+    border: 1px solid #dcdcdc;
+    padding: 24px 48px;
+    min-height: 800px;
+
+    @media screen and (min-width: 735px) {
+        width: 935px;
+        margin: 24px auto;
+    }
+
+    h3 {
+        margin-top: 0;
+        margin-bottom: 48px;
+    }
+
+    .edit-avatar {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .edit-avatar-picker {
+        h5 {
+            margin: 0;
+            line-height: 16px;
+        }
+
+        button {
+            padding: 0;
+
+            &:hover {
+                border-color: #fff;
+            }
+        }
+    }
+}

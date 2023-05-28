@@ -1,0 +1,19 @@
+.user-settings {
+    width: 350px !important;
+
+    button {
+        width: 100%;
+        color: #222;
+        border-bottom: 1px solid #dcdcdc;
+        border-radius: 0 !important;
+
+        &:hover {
+            border-color: #fff;
+            border-bottom-color: #dcdcdc;
+        }
+
+        &:last-child {
+            border: none;
+        }
+    }
+}

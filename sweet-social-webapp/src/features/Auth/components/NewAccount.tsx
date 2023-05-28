@@ -1,5 +1,8 @@
 import { Button, Result } from "antd";
 import { FunctionComponent, useEffect, useState } from "react";
+import { useUser } from "../../User/contexts/UserContext";
+import PageLoading from "../../../components/Loading/PageLoading";
+import { useNavigate } from "react-router-dom";
 
 interface NewAccountProps {
 
@@ -8,6 +11,20 @@ interface NewAccountProps {
 const NewAccount: FunctionComponent<NewAccountProps> = () => {
     const [timer, setTimer] = useState(60);
     const [isCounting, setIsCounting] = useState(true);
+    const [loading, setLoading] = useState<boolean>(true)
+
+
+    const { user } = useUser()
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if(user && user.isVerified) {
+            navigate("/")
+            setLoading(false)
+        } else {
+            setLoading(false)
+        }
+    }, [])
 
     useEffect(() => {
         let interval: any;
@@ -35,6 +52,8 @@ const NewAccount: FunctionComponent<NewAccountProps> = () => {
         setTimer(60)
         setIsCounting(true)
     }
+
+    if(loading) return <PageLoading />
 
     return (
         <Result

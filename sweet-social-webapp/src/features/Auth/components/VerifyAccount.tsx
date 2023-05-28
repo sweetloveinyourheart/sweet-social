@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import PageLoading from "../../../components/Loading/PageLoading";
 import { Button, Result } from "antd";
 import { verifyToken } from "../services/auth";
+import { useUser } from "../../User/contexts/UserContext";
 
 interface VerifyAccountProps {
     
@@ -13,7 +14,15 @@ const VerifyAccount: FunctionComponent<VerifyAccountProps> = () => {
     const [result, setResult] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [searchParams] = useSearchParams()
+
     const navigate = useNavigate()
+    const { user } = useUser()
+
+    useEffect(() => {
+        if(user && user.isVerified) {
+            navigate("/")
+        }
+    }, [])
 
     useEffect(() => {
         (async () => {

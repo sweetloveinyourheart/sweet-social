@@ -2,10 +2,11 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../Auth/contexts/AuthContext";
 import { UserProfile, getUserProfile } from "../services/user";
 import PageLoading from "../../../components/Loading/PageLoading";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface UserContext {
     user: UserProfile | null
+    update: () => Promise<void>
 }
 
 const UserContext = createContext({} as UserContext)
@@ -16,14 +17,14 @@ export function useUser() {
 
 export default function UserProvider({ children }: { children: any }) {
     const [user, setUser] = useState<UserProfile | null>(null)
-    const [loading, setLoading] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(true)
 
     const { accessToken } = useAuth()
     const navigate = useNavigate()
+    const location = useLocation()
 
     const getUser = async () => {
         try {
-            setLoading(true)
             const userData = await getUserProfile()
             setUser(userData)
         } catch (error) {
@@ -42,12 +43,26 @@ export default function UserProvider({ children }: { children: any }) {
 
     useEffect(() => {
         if (user && !user.isVerified) {
+            // If user is verifying account, just go to the verify page
+            if(location.pathname.includes('/auth/verify')) {
+                setLoading(false)
+                return;
+            }
+
+            // If the user has not verified their account yet, redirect them to the new account page.
             navigate('/auth/new-account')
+            setLoading(false)
+        }
+
+        if (!user && !accessToken) {
+            navigate('/auth/sign-in')
+            setLoading(false)
         }
     }, [user])
 
     const memoedValue = useMemo(() => ({
-        user
+        user,
+        update: getUser
     }), [user])
 
     if (loading) return <PageLoading />

@@ -1,18 +1,19 @@
 .sidebar {
     border-right: 1px solid #dcdcdc;
     background: #fff !important;
-    position: fixed !important;
     height: 100vh;
 
     .sidebar-menu {
+        height: auto !important;
+
         li {
             font-size: 15px;
             font-weight: 500;
             margin-bottom: 16px !important;
             margin-block: 12px !important;
-            
+
             .ant-menu-title-content {
-                margin-left: 16px;  
+                margin-left: 16px;
             }
         }
 
