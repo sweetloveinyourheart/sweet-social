@@ -55,7 +55,9 @@ export class AuthService {
 
     async signIn(email: string, pass: string): Promise<AuthDto> {
         const user = await this.usersService.findOneByEmail(email);
-        if (!user || !this.isValidPassword(pass, user.password)) {
+        const isValidPassword = await this.isValidPassword(pass, user.password)
+
+        if (!user || !isValidPassword) {
             throw new UnauthorizedException('Username or password is wrong');
         }
 

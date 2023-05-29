@@ -1,4 +1,4 @@
-import { Controller, Body, Get, Request, UseGuards, Put, Post, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Body, Get, Request, UseGuards, Put, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserProfileDto } from './dto/user-dto';
@@ -39,7 +39,18 @@ export class UsersController {
   @ApiBody({ type: UpdateAvatarDto })
   @ApiOperation({ summary: 'Update avatar using GCP Bucket Service' })
   @ApiResponse({ type: MessageDto, status: 200 })
-  @UseInterceptors(FileInterceptor('avatar'))
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      fileFilter(req, file, callback) {
+        // Check the file type
+        if (file.mimetype.startsWith('image/')) {
+          callback(null, true); // Accept the file with image format
+        } else {
+          callback(new BadRequestException('Invalid file type'), false); // Reject the file
+        }
+      },
+    })
+  )
   @Put('/update/avatar')
   async updateAvatar(@Request() req: Request, @UploadedFile() avatar: Express.Multer.File) {
     const id = req['user'].id

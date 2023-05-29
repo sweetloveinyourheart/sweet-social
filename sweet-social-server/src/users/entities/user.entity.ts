@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
 import { Profile } from "./profile.entity"
+import { Post } from "src/posts/entities/post.entity"
 
 export enum UserRoles {
     User = "user",
@@ -32,4 +33,7 @@ export class User {
     @OneToOne(() => Profile, profile => profile.user, { cascade: true })
     @JoinColumn()
     profile: Profile;
+
+    @OneToMany(() => Post, post => post.user)
+    posts: Post[]
 }

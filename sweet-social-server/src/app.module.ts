@@ -7,6 +7,8 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { GcpBucketModule } from './gcp-bucket/gcp-bucket.module';
+import { PostsModule } from './posts/posts.module';
+import { InteractionsModule } from './interactions/interactions.module';
 
 @Module({
   imports: [
@@ -24,7 +26,9 @@ import { GcpBucketModule } from './gcp-bucket/gcp-bucket.module';
     UsersModule,
     AuthModule,
     MailModule,
-    GcpBucketModule
+    GcpBucketModule,
+    PostsModule,
+    InteractionsModule
   ],
   controllers: [AppController],
   providers: [AppService],
