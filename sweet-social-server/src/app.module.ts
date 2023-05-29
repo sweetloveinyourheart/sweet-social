@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
+import { GcpBucketModule } from './gcp-bucket/gcp-bucket.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { MailModule } from './mail/mail.module';
     }),
     UsersModule,
     AuthModule,
-    MailModule
+    MailModule,
+    GcpBucketModule
   ],
   controllers: [AppController],
   providers: [AppService],

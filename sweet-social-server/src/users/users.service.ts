@@ -8,12 +8,14 @@ import { Profile } from './entities/profile.entity';
 import { UserProfileDto } from './dto/user-dto';
 import { MessageDto } from 'src/auth/dto/message.dto';
 import * as bcrypt from 'bcrypt';
+import { GcpBucketService } from 'src/gcp-bucket/gcp-bucket.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
-    @InjectRepository(Profile) private readonly profilesRepository: Repository<Profile>
+    @InjectRepository(Profile) private readonly profilesRepository: Repository<Profile>,
+    private readonly gcpBucketService: GcpBucketService
   ) { }
 
   private async hashPassword(pass: string): Promise<string> {
@@ -87,5 +89,17 @@ export class UsersService {
   async checkUserIsVerified(id: number): Promise<boolean> {
     const { isVerified } = await this.usersRepository.findOneBy({ id })
     return isVerified
+  }
+
+  async updateAvatar(userId: number, file: Express.Multer.File): Promise<MessageDto> {
+    const profile = await this.profilesRepository.findOne({ where: { user: { id: userId } }, relations: ['user'] })
+    if (!profile) {
+      throw new NotFoundException('Profile not found !')
+    }
+
+    const newAvatar = await this.gcpBucketService.uploadFile(file)
+    await this.profilesRepository.update({ id: profile.id }, { avatar: newAvatar.metadata.mediaLink })
+    
+    return { message: "Avatar updated! " }
   }
 }

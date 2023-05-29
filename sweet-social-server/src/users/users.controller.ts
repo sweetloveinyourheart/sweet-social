@@ -1,15 +1,17 @@
-import { Controller, Body, Get, Request, UseGuards, Put } from '@nestjs/common';
+import { Controller, Body, Get, Request, UseGuards, Put, Post, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserProfileDto } from './dto/user-dto';
 import { AuthGuard } from 'src/auth/guards/jwt.guard';
 import { MessageDto } from 'src/auth/dto/message.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateAvatarDto } from './dto/update-avatar';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
@@ -29,5 +31,18 @@ export class UsersController {
   async updateProfile(@Request() req: Request, @Body() data: UpdateProfileDto): Promise<MessageDto> {
     const id = req['user'].id
     return await this.usersService.updateProfile(id, data)
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UpdateAvatarDto })
+  @ApiOperation({ summary: 'Update avatar using GCP Bucket Service' })
+  @ApiResponse({ type: MessageDto, status: 200 })
+  @UseInterceptors(FileInterceptor('avatar'))
+  @Put('/update/avatar')
+  async updateAvatar(@Request() req: Request, @UploadedFile() avatar: Express.Multer.File) {
+    const id = req['user'].id
+    return await this.usersService.updateAvatar(id, avatar)
   }
 }
