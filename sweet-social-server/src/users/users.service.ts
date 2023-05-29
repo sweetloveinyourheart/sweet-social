@@ -6,7 +6,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { Profile } from './entities/profile.entity';
 import { UserProfileDto } from './dto/user-dto';
-import { MessageDto } from 'src/auth/dto/message.dto';
+import { MessageDto } from 'src/common/dto/message.dto';
 import * as bcrypt from 'bcrypt';
 import { GcpBucketService } from 'src/gcp-bucket/gcp-bucket.service';
 

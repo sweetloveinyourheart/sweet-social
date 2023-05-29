@@ -36,10 +36,15 @@ export class GcpBucketService {
         }
     }
 
-    async removeFile(path: string): Promise<void> {
+    async removeFile(url: string): Promise<void> {
+        const regex = /\/([^/]+)\?/; // // Matches the part between the last slash and the question mark
+        const match = url.match(regex);
+
+        const extractedName = match ? match[1] : url
+
         await this.storage
-          .bucket(this.bucketName)
-          .file(path)
-          .delete({ ignoreNotFound: true });
-      }
+            .bucket(this.bucketName)
+            .file(extractedName)
+            .delete({ ignoreNotFound: true });
+    }
 }

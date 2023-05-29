@@ -1,5 +1,6 @@
-import { ApiProperty } from "@nestjs/swagger"
+import { ApiExtraModels, ApiProperty } from "@nestjs/swagger"
 import { MediaType } from "../entities/media.entity"
+import { PaginationDto } from "src/common/dto/pagination.dto"
 
 class MediaDto {
     @ApiProperty()
@@ -27,4 +28,10 @@ export class PostDto {
 
     @ApiProperty({ type: [MediaDto] })
     medias: MediaDto[]
+}
+
+@ApiExtraModels(PostDto)
+export class PaginationPostDto extends PaginationDto<PostDto> {
+    @ApiProperty({ type: [PostDto] })
+    items: PostDto[]
 }

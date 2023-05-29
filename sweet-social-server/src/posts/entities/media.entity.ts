@@ -20,7 +20,7 @@ export class Media {
     @CreateDateColumn()
     createdAt: Date
 
-    @ManyToOne(() => Post, post => post.medias)
+    @ManyToOne(() => Post, post => post.medias, { onDelete: 'CASCADE' })
     post: Post
 
 }

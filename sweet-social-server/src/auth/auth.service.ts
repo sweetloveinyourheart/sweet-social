@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { Repository } from 'typeorm';
 import { MailService } from 'src/mail/mail.service';
-import { MessageDto } from './dto/message.dto';
+import { MessageDto } from '../common/dto/message.dto';
 import { AuthDto, RefreshTokenDto, SignOutDto } from './dto/auth.dto';
 import * as bcrypt from 'bcrypt';
 

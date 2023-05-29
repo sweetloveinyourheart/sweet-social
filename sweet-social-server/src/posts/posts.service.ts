@@ -1,11 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Post } from './entities/post.entity';
 import { Media, MediaType } from './entities/media.entity';
 import { NewPostDto } from './dto/new-post.dto';
 import { GcpBucketService } from 'src/gcp-bucket/gcp-bucket.service';
-import { MessageDto } from 'src/auth/dto/message.dto';
+import { MessageDto } from 'src/common/dto/message.dto';
+import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
+import { PaginationPostDto } from './dto/post.dto';
 
 @Injectable()
 export class PostsService {
@@ -53,7 +55,40 @@ export class PostsService {
         return { message: 'Your post has been uploaded' }
     }
 
-    async getPersonalPosts(userId: number): Promise<Post[]> {
-        return await this.postsRepository.find({ where: { user: { id: userId } }, relations: ['medias'] } )
+    async getPersonalPosts(userId: number, options: IPaginationOptions): Promise<PaginationPostDto> {
+        const queryBuilder = this.postsRepository.createQueryBuilder('post')
+        queryBuilder
+            .innerJoinAndSelect('post.medias', 'media')
+            .where('post.user.id = :userId', { userId })
+
+        return await paginate(queryBuilder, options)
+    }
+
+    async getUserPosts(username: string, options: IPaginationOptions): Promise<PaginationPostDto> {
+        const queryBuilder = this.postsRepository.createQueryBuilder('post')
+        queryBuilder
+            .innerJoinAndSelect('post.medias', 'media')
+            .where('post.user.id = :userId', { username })
+
+        return await paginate(queryBuilder, options)
+    }
+
+    async removePost(userId: number, postId: number): Promise<MessageDto> {
+        const post = await this.postsRepository.findOne({
+            where: { id: postId, user: { id: userId } },
+            relations: ['medias']
+        })
+
+        if (!post) {
+            throw new NotFoundException('Cannot find this post !')
+        }
+
+        await Promise.all(post.medias.map((media) => {
+            this.gcpBucketService.removeFile(media.mediaUrl)
+        }))
+
+        await this.postsRepository.delete({ id: post.id })
+
+        return { message: 'Post has been deleted !' }
     }
 }

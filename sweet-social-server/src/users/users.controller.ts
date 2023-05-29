@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserProfileDto } from './dto/user-dto';
 import { AuthGuard } from 'src/auth/guards/jwt.guard';
-import { MessageDto } from 'src/auth/dto/message.dto';
+import { MessageDto } from 'src/common/dto/message.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateAvatarDto } from './dto/update-avatar';

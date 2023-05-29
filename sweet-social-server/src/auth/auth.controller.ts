@@ -4,7 +4,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthDto, RefreshTokenDto, SignOutDto } from './dto/auth.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
-import { MessageDto } from './dto/message.dto';
+import { MessageDto } from '../common/dto/message.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
