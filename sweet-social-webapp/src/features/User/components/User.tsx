@@ -5,6 +5,7 @@ import "../styles/User.scss"
 import { useUser } from "../contexts/UserContext";
 import UserSettings from "./UserSettings";
 import { useNavigate } from "react-router-dom";
+import EditAvatar from "./EditAvatar";
 
 interface UserProps { }
 
@@ -51,13 +52,7 @@ const User: FunctionComponent<UserProps> = () => {
         <div className="profile">
             <Row>
                 <Col span={6}>
-                    <Avatar
-                        size={125}
-                        style={{ backgroundColor: '#fde3cf', color: '#f56a00' }}
-                        icon={<UserOutlined />}
-                    >
-                        {user?.profile.name[0]}
-                    </Avatar>
+                    <EditAvatar openMode="image"/>
                 </Col>
                 <Col span={18}>
                     <div className="profile-title">

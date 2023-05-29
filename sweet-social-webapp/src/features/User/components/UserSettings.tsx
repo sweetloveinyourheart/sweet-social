@@ -19,6 +19,10 @@ const UserSettings: FunctionComponent<UserSettingsProps> = () => {
         setIsModalOpen(true);
     };
 
+    const handleEdit = () => {
+        navigate('/accounts/edit')
+    }
+
     const handleCancel = () => {
         setIsModalOpen(false);
     };
@@ -32,7 +36,7 @@ const UserSettings: FunctionComponent<UserSettingsProps> = () => {
         <>
             <Button type="link" icon={<SettingOutlined />} onClick={showModal} />
             <Modal title={null} open={isModalOpen} onCancel={handleCancel} footer={null} closable={false} className="user-settings">
-                    <Button type="link" size="large">Edit profile</Button>
+                    <Button type="link" size="large" onClick={handleEdit}>Edit profile</Button>
                     <Button type="link" size="large" onClick={handleLogout}>Logout</Button>
                     <Button type="link" size="large" onClick={handleCancel}>Cancel</Button>
             </Modal>

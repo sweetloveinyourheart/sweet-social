@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 interface UserContext {
     user: UserProfile | null
-    update: () => Promise<void>
+    refreshUserData: () => Promise<void>
 }
 
 const UserContext = createContext({} as UserContext)
@@ -62,7 +62,7 @@ export default function UserProvider({ children }: { children: any }) {
 
     const memoedValue = useMemo(() => ({
         user,
-        update: getUser
+        refreshUserData: getUser
     }), [user])
 
     if (loading) return <PageLoading />

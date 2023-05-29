@@ -1,9 +1,10 @@
 import { FunctionComponent, useEffect, useState } from "react";
 import "../styles/EditProfile.scss"
-import { Alert, Avatar, Button, Col, Form, Input, Row, Select, Typography, notification } from "antd";
+import { Alert, Avatar, Button, Col, Form, Input, Row, Select, Spin, Typography, notification } from "antd";
 import { UserOutlined } from '@ant-design/icons';
 import { useUser } from "../contexts/UserContext";
 import { updateProfile } from "../services/user";
+import EditAvatar from "./EditAvatar";
 
 interface EditProfileProps {
 
@@ -15,7 +16,7 @@ const EditProfile: FunctionComponent<EditProfileProps> = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
 
-    const { user, update } = useUser()
+    const { user, refreshUserData } = useUser()
 
     useEffect(() => {
         if (user) {
@@ -36,7 +37,7 @@ const EditProfile: FunctionComponent<EditProfileProps> = () => {
                 type: "success",
                 description: 'Your profile has been updated, feel free to try another feature ^.^',
             });
-            await update()
+            await refreshUserData()
         } catch (error: any) {
             setError(error.response?.data?.message || `An error occurred: ${error.message}`)
         } finally {
@@ -62,20 +63,35 @@ const EditProfile: FunctionComponent<EditProfileProps> = () => {
                     <Row>
                         <Col span={8}>
                             <div className="edit-avatar">
-                                <Avatar
-                                    size={40}
-                                    style={{ backgroundColor: '#fde3cf', color: '#f56a00' }}
-                                    icon={<UserOutlined />}
-                                >
-                                    {user?.profile.name[0]}
-                                </Avatar>
+                                {(user && user.profile.avatar)
+                                    ? (
+                                        <Spin spinning={loading}>
+                                            <Avatar
+                                                size={40}
+                                                style={{ cursor: 'pointer' }}
+                                                src={user.profile.avatar}
+                                            />
+                                        </Spin>
+                                    )
+                                    : (
+                                        <Spin spinning={loading}>
+                                            <Avatar
+                                                size={40}
+                                                style={{ backgroundColor: '#fde3cf', color: '#f56a00', cursor: 'pointer' }}
+                                                icon={<UserOutlined />}
+                                            >
+                                                {user?.profile.name[0]}
+                                            </Avatar>
+                                        </Spin>
+                                    )
+                                }
                             </div>
                         </Col>
                         <Col span={1}></Col>
                         <Col span={15}>
                             <div className="edit-avatar-picker">
                                 <Typography.Title level={5}>{user?.profile.username}</Typography.Title>
-                                <Button type="link">Change profile photo</Button>
+                                <EditAvatar openMode="string" />
                             </div>
                         </Col>
                     </Row>
