@@ -1,9 +1,10 @@
 import { Alert, Button, Divider, Form, Input, Typography } from "antd";
-import { FunctionComponent } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import Logo from "../../../components/Logo/Logo";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleCircleFilled } from '@ant-design/icons';
 import { useAuth } from "../contexts/AuthContext";
+import PageLoading from "../../../components/Loading/PageLoading";
 
 interface SignInProps {
 
@@ -11,14 +12,26 @@ interface SignInProps {
 
 const SignIn: FunctionComponent<SignInProps> = () => {
     const [form] = Form.useForm();
+    const [componentLoading, setComponentLoading] = useState<boolean>(true)
 
-    const { login, error, loading } = useAuth()
     const navigate = useNavigate()
+    const { login, error, loading, accessToken } = useAuth()
+
+    useEffect(() => {
+        if(accessToken) {
+            navigate('/')
+        } 
+
+        setComponentLoading(false)
+    }, [accessToken])
+
 
     const onFinish = async (values: any) => {
         await login(values)
         navigate('/')
     };
+
+    if(loading || componentLoading) return <PageLoading />
 
     return (
         <>

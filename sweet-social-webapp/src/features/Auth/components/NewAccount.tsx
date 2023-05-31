@@ -11,7 +11,7 @@ interface NewAccountProps {
 const NewAccount: FunctionComponent<NewAccountProps> = () => {
     const [timer, setTimer] = useState(60);
     const [isCounting, setIsCounting] = useState(true);
-    const [loading, setLoading] = useState<boolean>(true)
+    const [componentLoading, setComponentLoading] = useState<boolean>(true)
 
 
     const { user } = useUser()
@@ -20,10 +20,9 @@ const NewAccount: FunctionComponent<NewAccountProps> = () => {
     useEffect(() => {
         if(user && user.isVerified) {
             navigate("/")
-            setLoading(false)
-        } else {
-            setLoading(false)
         }
+
+        setComponentLoading(false)
     }, [])
 
     useEffect(() => {
@@ -53,7 +52,7 @@ const NewAccount: FunctionComponent<NewAccountProps> = () => {
         setIsCounting(true)
     }
 
-    if(loading) return <PageLoading />
+    if(componentLoading) return <PageLoading />
 
     return (
         <Result

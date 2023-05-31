@@ -1,0 +1,18 @@
+.creation-box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+
+    h5 {
+        margin: 0;
+    }
+}
+
+.creation-uploader {
+    .ant-upload-list-item-image {
+        aspect-ratio: 4/5;
+        width: auto !important;
+        height: 48px;
+    }
+}

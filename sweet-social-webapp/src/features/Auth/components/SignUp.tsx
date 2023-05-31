@@ -1,24 +1,36 @@
 import { Alert, Button, Divider, Form, Input, Typography } from "antd";
-import { FunctionComponent } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import "../styles/Auth.scss"
 import Logo from "../../../components/Logo/Logo";
 import { GoogleCircleFilled } from '@ant-design/icons';
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import PageLoading from "../../../components/Loading/PageLoading";
 
 interface SignUpProps { }
 
 const SignUp: FunctionComponent<SignUpProps> = () => {
     const [form] = Form.useForm();
+    const [componentLoading, setComponentLoading] = useState<boolean>(true)
 
     const navigate = useNavigate()
-    const { register, loading, error } = useAuth()
+    const { register, error, loading, accessToken } = useAuth()
+
+    useEffect(() => {
+        if(accessToken) {
+            navigate('/')
+        }
+
+        setComponentLoading(false)
+    }, [accessToken])
 
     const onFinish = async (values: any) => {
         const body = values
         await register(body)
         navigate('/auth/new-account')
     };
+
+    if(loading || componentLoading) return <PageLoading />
 
     return (
         <>

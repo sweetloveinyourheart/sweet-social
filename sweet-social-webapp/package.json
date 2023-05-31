@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "antd": "^5.5.1",
+    "antd-img-crop": "^4.12.2",
     "axios": "^1.4.0",
     "js-cookie": "^3.0.5",
     "react": "^18.2.0",

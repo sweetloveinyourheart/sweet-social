@@ -14,6 +14,7 @@ const VerifyAccount: FunctionComponent<VerifyAccountProps> = () => {
     const [result, setResult] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [searchParams] = useSearchParams()
+    const [componentLoading, setComponentLoading] = useState<boolean>(true)
 
     const navigate = useNavigate()
     const { user } = useUser()
@@ -22,6 +23,8 @@ const VerifyAccount: FunctionComponent<VerifyAccountProps> = () => {
         if(user && user.isVerified) {
             navigate("/")
         }
+
+        setComponentLoading(false)
     }, [])
 
     useEffect(() => {
@@ -42,7 +45,7 @@ const VerifyAccount: FunctionComponent<VerifyAccountProps> = () => {
         })()
     }, [])
 
-    if (loading) return <PageLoading />
+    if (loading || componentLoading) return <PageLoading />
 
     return (
         result

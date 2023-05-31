@@ -6,6 +6,7 @@ import { useUser } from "../contexts/UserContext";
 import UserSettings from "./UserSettings";
 import { useNavigate } from "react-router-dom";
 import EditAvatar from "./EditAvatar";
+import PersonalPosts from "../../Post/components/PersonalPosts";
 
 interface UserProps { }
 
@@ -48,6 +49,16 @@ const User: FunctionComponent<UserProps> = () => {
         navigate('/accounts/edit')
     }
 
+    const renderMenuTabs = () => {
+        switch (current) {
+            case ProfileMenu.Post:
+                return <PersonalPosts />
+        
+            default:
+                return <PersonalPosts />;
+        }
+    }
+
     return (
         <div className="profile">
             <Row>
@@ -83,6 +94,7 @@ const User: FunctionComponent<UserProps> = () => {
             <div className="profile-menu">
                 <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
             </div>
+            {renderMenuTabs()}
         </div>
     );
 }
