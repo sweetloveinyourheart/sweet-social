@@ -7,6 +7,12 @@ export enum UserRoles {
     Admin = "admin"
 }
 
+export enum AccountStatus {
+    Opened = "opened",
+    Closed = "closed",
+    Banned = 'banned'
+}
+
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
@@ -23,6 +29,9 @@ export class User {
 
     @Column({ default: false })
     isVerified: boolean
+
+    @Column({ default: AccountStatus.Opened, enum: AccountStatus })
+    status: AccountStatus
 
     @CreateDateColumn()
     createdAt: Date

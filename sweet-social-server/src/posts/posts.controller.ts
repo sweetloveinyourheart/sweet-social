@@ -16,7 +16,7 @@ export class PostsController {
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Upload your post' })
-  @UseInterceptors(FilesInterceptor('medias', undefined, {
+  @UseInterceptors(FilesInterceptor('medias', 10, {
     fileFilter(req, file, callback) {
       if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
         callback(null, true); // Accept the file with image format
@@ -26,7 +26,7 @@ export class PostsController {
     },
   }))
   @Post('/new')
-  async createNewPost(@Request() req, @UploadedFiles() files: Express.Multer.File[], @Body() post: NewPostDto): Promise<MessageDto> {
+  async createNewPost(@Request() req, @UploadedFiles() files: Express.Multer.File[], @Body() post: NewPostDto): Promise<any> {
     const userId = req['user'].id
     return await this.postsService.createNewPost(userId, post, files)
   }
