@@ -3,18 +3,23 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { Profile } from './entities/profile.entity';
 import { UserProfileDto } from './dto/user-dto';
 import { MessageDto } from 'src/common/dto/message.dto';
 import * as bcrypt from 'bcrypt';
 import { GcpBucketService } from 'src/gcp-bucket/gcp-bucket.service';
+import { BasicUserDto } from './dto/basic-info.dto';
+import { Following } from './entities/following.entity';
+import { Follower } from './entities/follower.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
     @InjectRepository(Profile) private readonly profilesRepository: Repository<Profile>,
+    @InjectRepository(Following) private readonly followingRepository: Repository<Following>,
+    @InjectRepository(Follower) private readonly followersRepository: Repository<Follower>,
     private readonly gcpBucketService: GcpBucketService
   ) { }
 
@@ -48,7 +53,11 @@ export class UsersService {
   }
 
   async getUserProfile(id: number): Promise<UserProfileDto> {
-    const user = await this.usersRepository.findOne({ relations: ['profile'], where: { id } });
+    const user = await this.usersRepository.findOne({
+      relations: ['profile'],
+      where: { id }
+    });
+
     const userProfile: UserProfileDto = {
       email: user.email,
       isVerified: user.isVerified,
@@ -62,6 +71,32 @@ export class UsersService {
     }
 
     return userProfile
+  }
+
+  async getSuggestedAccounts(userId: number): Promise<BasicUserDto[]> {
+    const suggested = await this.usersRepository.find({
+      select: {
+        id: true,
+        profile: {
+          username: true,
+          name: true,
+          avatar: true
+        }
+      },
+      relations: ['profile', 'followers', 'followers.followerUser'],
+      where: {
+        profile: {
+          premium: true
+        },
+        id: Not(userId),
+        followers: {
+          followerUser: {
+            id: Not(userId)
+          }
+        }
+      }
+    })
+    return suggested
   }
 
   async findOneById(id: number): Promise<User> {
@@ -86,6 +121,16 @@ export class UsersService {
     return { message: "Profile updated! " }
   }
 
+  async upgradeUser(userId: number): Promise<MessageDto> {
+    const profile = await this.profilesRepository.findOne({ where: { user: { id: userId } }, relations: ['user'] })
+    if (!profile) {
+      throw new NotFoundException('Profile not found !')
+    }
+
+    await this.profilesRepository.update({ id: profile.id }, { premium: true })
+    return { message: "Profile updated! " }
+  }
+
   async checkUserIsVerified(id: number): Promise<boolean> {
     const { isVerified } = await this.usersRepository.findOneBy({ id })
     return isVerified
@@ -99,7 +144,41 @@ export class UsersService {
 
     const newAvatar = await this.gcpBucketService.uploadFile(file)
     await this.profilesRepository.update({ id: profile.id }, { avatar: newAvatar.metadata.mediaLink })
-    
+
     return { message: "Avatar updated! " }
+  }
+
+  async followUser(userId: number, followingId: number): Promise<MessageDto> {
+    const followingUser = await this.usersRepository.findOneBy({ id: followingId })
+    if (!followingUser) {
+      throw new NotFoundException('Not found !')
+    }
+
+    const isFollowed = await this.followingRepository.findOneBy({ user: { id: userId }, followingUser: { id: followingId } })
+    if (isFollowed) {
+      throw new BadRequestException('You already follow this user!')
+    }
+
+    const newFollowing = this.followingRepository.create({ user: { id: userId }, followingUser })
+    const newFollower = this.followersRepository.create({ user: { id: followingId }, followerUser: { id: userId } })
+
+    await this.followersRepository.save(newFollower)
+    await this.followingRepository.save(newFollowing)
+
+    return { message: "Follow user successfully !" }
+  }
+
+  async unfollowUser(userId: number, followingId: number): Promise<MessageDto> {
+    const followingUser = await this.followingRepository.findOneBy({ user: { id: userId }, followingUser: { id: followingId } })
+    const followerUser = await this.followersRepository.findOneBy({ user: { id: followingId }, followerUser: { id: userId } })
+
+    if (!followingUser || !followerUser) {
+      throw new NotFoundException('Not found !')
+    }
+
+    await this.followersRepository.delete(followerUser)
+    await this.followingRepository.delete(followingUser)
+
+    return { message: "Follow user successfully !" }
   }
 }

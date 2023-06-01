@@ -37,31 +37,8 @@ export class PostDto {
     medias: MediaDto[]
 }
 
-@ApiExtraModels(PostDto)
+
 export class PaginationPostDto extends PaginationDto<PostDto> {
     @ApiProperty({ type: [PostDto] })
     items: PostDto[]
-}
-
-export class PostDetailDto {
-    @ApiProperty()
-    id: number
-
-    @ApiProperty()
-    caption: string
-
-    @ApiProperty()
-    likesCount: number
-
-    @ApiProperty()
-    commentsCount: number
-
-    @ApiProperty()
-    createdAt: Date
-
-    @ApiProperty({ type: [MediaDto] })
-    medias: MediaDto[]
-
-    @ApiProperty({ type: UserProfileDto })
-    user: UserProfileDto
 }

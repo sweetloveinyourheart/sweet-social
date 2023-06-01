@@ -6,9 +6,10 @@ import { Media, MediaType } from './entities/media.entity';
 import { NewPostDto } from './dto/new-post.dto';
 import { GcpBucketService } from 'src/gcp-bucket/gcp-bucket.service';
 import { MessageDto } from 'src/common/dto/message.dto';
-import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
-import { PaginationPostDto, PostDetailDto } from './dto/post.dto';
+import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
+import { PaginationPostDto } from './dto/post.dto';
 import { PostSettings } from './entities/post-settings.entity';
+import { PostDetailDto, PostDetailPagination } from './dto/post-detail.dto';
 
 @Injectable()
 export class PostsService {
@@ -62,7 +63,7 @@ export class PostsService {
             settings,
             user: { id: userId }
         })
-        
+
         await this.postsRepository.save(newPost)
 
         return { message: 'Your post has been uploaded' }
@@ -79,7 +80,7 @@ export class PostsService {
     }
 
     async getPostById(postId: number): Promise<PostDetailDto> {
-        const post = await this.postsRepository.findOne({ 
+        const post = await this.postsRepository.findOne({
             select: {
                 id: true,
                 caption: true,
@@ -96,10 +97,10 @@ export class PostsService {
                     }
                 }
             },
-            where: { id: postId }, 
-            relations: ['user', 'user.profile', 'medias'] 
+            where: { id: postId },
+            relations: ['user', 'user.profile', 'medias']
         })
-        if(!post) throw new NotFoundException('Cannot found this post')
+        if (!post) throw new NotFoundException('Cannot found this post')
 
         return post
     }
@@ -130,5 +131,38 @@ export class PostsService {
         await this.postsRepository.delete({ id: post.id })
 
         return { message: 'Post has been deleted !' }
+    }
+
+    async getNewsfeedPosts(userId: number, options: IPaginationOptions): Promise<PostDetailPagination> {
+        const queryBuilder = this.postsRepository.createQueryBuilder('post')
+
+        // we recommend showing posts of author that user following
+        queryBuilder
+            .innerJoin('post.medias', 'media')
+            .innerJoin('post.user', 'user')
+            .innerJoin('user.profile', 'profile')
+            .innerJoin('user.followers', 'followers') // join with follower table to find following user's posts
+            .innerJoin('followers.followerUser', 'fuser')
+            .select(['post', 'media', 'user.id', 'profile.avatar', 'profile.name', 'profile.username'])
+            .where('fuser.id = :userId', { userId }) // match where user id exist on the followers list of post owner
+            .orderBy('post.createdAt', 'DESC')
+
+        const result = await paginate(queryBuilder, options)
+        if (result.meta.itemCount < 1) {
+            const queryBuilderForPremium = this.postsRepository.createQueryBuilder('post')
+
+            // looking for awesome post coming from premium user
+            queryBuilderForPremium
+                .innerJoin('post.medias', 'media')
+                .innerJoin('post.user', 'user')
+                .innerJoin('user.profile', 'profile')
+                .select(['post', 'media', 'user.id', 'profile.avatar', 'profile.name', 'profile.username'])
+                .where('profile.premium = true')
+                .orderBy('post.createdAt', 'DESC')
+
+            return await paginate(queryBuilderForPremium, options)
+        }
+
+        return result
     }
 }

@@ -3,6 +3,9 @@ import { Profile } from "./profile.entity"
 import { Post } from "src/posts/entities/post.entity"
 import { Like } from "src/reactions/entities/like.entity"
 import { Comment } from "src/reactions/entities/comment.entity"
+import { Notification } from "src/notifications/entities/notification.entity"
+import { Following } from "./following.entity"
+import { Follower } from "./follower.entity"
 
 export enum UserRoles {
     User = "user",
@@ -53,4 +56,16 @@ export class User {
 
     @OneToMany(() => Comment, comment => comment.user)
     comments: Comment[]
+
+    @OneToMany(() => Notification, notification => notification.recipient)
+    receivedNotifications: Notification[]
+
+    @OneToMany(() => Notification, (notification) => notification.sender)
+    sentNotifications: Notification[];
+
+    @OneToMany(() => Follower, follower => follower.user)
+    followers: Follower[]
+
+    @OneToMany(() => Following, following => following.user)
+    following: Following[]
 }

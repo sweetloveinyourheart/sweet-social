@@ -21,6 +21,9 @@ export class Profile {
     @Column({ nullable: true })
     avatar: string
 
+    @Column({ default: false })
+    premium: boolean
+
     @Column({ nullable: true })
     bio: string;
 

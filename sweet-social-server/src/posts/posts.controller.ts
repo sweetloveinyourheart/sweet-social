@@ -5,12 +5,27 @@ import { AuthGuard } from 'src/auth/guards/jwt.guard';
 import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { MessageDto } from 'src/common/dto/message.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { PaginationPostDto, PostDetailDto, PostDto } from './dto/post.dto';
-import { Pagination } from 'nestjs-typeorm-paginate';
+import { PaginationPostDto } from './dto/post.dto';
+import { PostDetailDto } from './dto/post-detail.dto';
+
 @ApiTags('Posts')
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) { }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Get newsfeed posts" })
+  @ApiResponse({ type: PaginationPostDto, status: 200 })
+  @Get('/newsfeed/get-all')
+  async getNewsfeedPosts(
+    @Request() req,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ): Promise<PaginationPostDto> {
+    const userId = req['user'].id
+    return await this.postsService.getNewsfeedPosts(userId, { page, limit })
+  }
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth()

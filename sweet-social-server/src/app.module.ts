@@ -9,6 +9,7 @@ import { MailModule } from './mail/mail.module';
 import { GcpBucketModule } from './gcp-bucket/gcp-bucket.module';
 import { PostsModule } from './posts/posts.module';
 import { ReactionsModule } from './reactions/reactions.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -28,9 +29,12 @@ import { ReactionsModule } from './reactions/reactions.module';
     MailModule,
     GcpBucketModule,
     PostsModule,
-    ReactionsModule
+    ReactionsModule,
+    NotificationsModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService
+  ],
 })
 export class AppModule { }

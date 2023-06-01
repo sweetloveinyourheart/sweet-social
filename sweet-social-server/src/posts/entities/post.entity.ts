@@ -4,6 +4,7 @@ import { Media } from "./media.entity";
 import { PostSettings } from "./post-settings.entity";
 import { Like } from "src/reactions/entities/like.entity";
 import { Comment } from "src/reactions/entities/comment.entity";
+import { Notification } from "src/notifications/entities/notification.entity";
 
 @Entity()
 export class Post {
@@ -37,4 +38,7 @@ export class Post {
 
     @OneToMany(() => Comment, comment => comment.post)
     comments: Comment[]
+
+    @OneToMany(() => Notification, notification => notification.post)
+    notifications: Notification[]
 }
