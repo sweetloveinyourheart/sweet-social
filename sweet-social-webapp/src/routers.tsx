@@ -5,14 +5,16 @@ import SignUp from "./features/Auth/components/SignUp";
 import SignIn from "./features/Auth/components/SignIn";
 import NewAccount from "./features/Auth/components/NewAccount";
 import VerifyAccount from "./features/Auth/components/VerifyAccount";
-import Home from "./pages/Home";
+import Main from "./pages/Main";
 import User from "./features/User/components/User";
 import EditProfile from "./features/User/components/EditProfile";
+import Home from "./pages/Home";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<App />}>
-            <Route path="" element={<Home />}>
+            <Route path="" element={<Main />}>
+                <Route path="" element={<Home />} />
                 <Route path="profile" element={<User />} />
                 <Route path="accounts/edit" element={<EditProfile />}/>
             </Route>

@@ -1,0 +1,41 @@
+.post-reaction {
+    border-bottom: 1px solid #dcdcdc;
+    padding: 12px 16px;
+
+    .behavior {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+
+        button {
+            font-size: 24px;
+            color: #222;
+            padding: 0px;
+            background-color: transparent;
+
+            &:hover {
+                color: #777;
+            }
+        }
+
+        &__left {
+            button {
+                margin-right: 12px;
+            }
+        }
+    }
+
+    .info {
+        padding: 0 4px;
+
+        h5 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        span {
+            color: #777;
+            font-size: 12px;
+        }
+    }
+}

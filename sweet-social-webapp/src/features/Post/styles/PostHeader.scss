@@ -1,0 +1,50 @@
+.post-header {
+    border-bottom: 1px solid #dcdcdc;
+    padding: 16px;
+
+    .author {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 4px;
+
+        &__left {
+            display: flex;
+            align-items: center;
+
+
+            h5 {
+                margin: 0;
+            }
+
+            button {
+                font-weight: 600;
+            }
+
+            .author-desc {
+                display: flex;
+                align-items: center;
+            }
+
+            .author-avatar {
+                width: 50px;
+            }
+
+            .dot {
+                margin-left: 12px;
+            }
+        }
+
+
+    }
+
+    .settings {
+        button {
+            color: #222;
+            padding-right: 0;
+
+            &:hover {
+                color: #777;
+            }
+        }
+    }
+}

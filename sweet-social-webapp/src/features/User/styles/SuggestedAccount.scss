@@ -1,0 +1,49 @@
+.suggested-accounts {
+    h5 {
+        margin: 0;
+    }
+
+    &__header {
+        margin-bottom: 16px !important;
+        color: #777;
+        font-size: 14px;
+    }
+
+    .account {
+        margin-bottom: 12px;
+
+        .account-info {
+            padding-right: 12px;
+
+            h5 {
+                font-size: 14px;
+                line-height: 18px;
+            }
+    
+            p {
+                font-size: 12px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                margin: 0;
+            }
+        }
+
+        .account-follow {
+            display: flex;
+            align-items: center;
+            height: 100%;
+
+            button {
+                padding: 0;
+    
+                span {
+                    font-size: 13px;
+                    font-weight: 600;
+                }
+            }
+        }
+
+
+    }
+}

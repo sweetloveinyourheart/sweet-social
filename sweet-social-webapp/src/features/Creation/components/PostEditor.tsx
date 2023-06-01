@@ -4,6 +4,7 @@ import { useUser } from "../../User/contexts/UserContext";
 import "../styles/PostEditor.scss"
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons'
 import { PostSettings } from "./CreationBox";
+import { UserOutlined } from '@ant-design/icons';
 
 interface PostEditorProps {
     fileList: UploadFile[]
@@ -33,7 +34,7 @@ const PostEditor: FunctionComponent<PostEditorProps> = ({ fileList, postSettings
                 <Col span={10}>
                     <div className="post-description">
                         <div className="post-author">
-                            <Avatar src={user?.profile.avatar} />
+                            <Avatar src={user?.profile.avatar} icon={<UserOutlined />}/>
                             <Typography.Title level={5}>
                                 {user?.profile.username}
                             </Typography.Title>

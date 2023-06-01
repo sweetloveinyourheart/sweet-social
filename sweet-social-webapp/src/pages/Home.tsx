@@ -1,22 +1,23 @@
-import { Layout } from "antd";
-import { Outlet } from "react-router-dom";
-import SiderBar from "../components/SideBar/SideBar";
-import CreatePostWrapper from "../features/Creation/contexts/CreatePost";
-import PostViewerProvider from "../features/Post/contexts/PostViewer";
+import { Col, Row, Typography } from "antd";
+import SuggestedAccount from "../features/User/components/SuggestedAccount";
+import Newsfeed from "../features/Post/components/Newsfeed/Newsfeed";
 
-function HomePage() {
+function Home() {
     return (
-        <CreatePostWrapper>
-            <PostViewerProvider>
-                <Layout style={{ background: "#fff", height: "100vh" }}>
-                    <SiderBar />
-                    <Layout style={{ background: "#fff", height: "100vh", overflowY: "scroll" }}>
-                        <Outlet />
-                    </Layout>
-                </Layout>
-            </PostViewerProvider>
-        </CreatePostWrapper>
+        <div className="main-area">
+            <Row gutter={16}>
+                <Col span={16}>
+                    <Newsfeed />
+                </Col>
+                <Col span={8}>
+                    <SuggestedAccount />
+                    <Typography.Text style={{ color: "#777", fontSize: 13 }}>
+                        © 2023 SWEETBOOK FROM TYNX
+                    </Typography.Text>
+                </Col>
+            </Row>
+        </div>
     );
 }
 
-export default HomePage;
+export default Home;

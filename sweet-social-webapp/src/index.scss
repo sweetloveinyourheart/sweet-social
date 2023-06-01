@@ -19,6 +19,7 @@ a {
   color: #646cff;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #535bf2;
 }
@@ -49,10 +50,23 @@ button {
     color: #213547;
     background-color: #ffffff;
   }
+
   a:hover {
     color: #747bff;
   }
+
   button {
     background-color: #f9f9f9;
+  }
+}
+
+.main-area {
+  width: 100%;
+  min-height: 100vh;
+
+  @media screen and (min-width: 736px) {
+    width: 935px;
+    margin: 0 auto;
+    padding: 30px 20px 0;
   }
 }
