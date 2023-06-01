@@ -1,7 +1,7 @@
 import { Layout } from "antd";
 import { Outlet } from "react-router-dom";
 
-function Auth() {
+function AuthPage() {
     return ( 
         <Layout className="auth">
             <Outlet />
@@ -9,4 +9,4 @@ function Auth() {
      );
 }
 
-export default Auth;
+export default AuthPage;

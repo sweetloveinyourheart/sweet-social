@@ -26,7 +26,7 @@ export default function CreationWrapper({ children }: { children: any }) {
     return (
         <CreationContext.Provider value={{ openCreationBox, closeCreationBox }}>
             {children}
-            <CreationBox isOpen={isOpen} handleCancel={closeCreationBox} />
+            {isOpen ? <CreationBox isOpen={isOpen} handleCancel={closeCreationBox} /> : null}
         </CreationContext.Provider>
     )
 }

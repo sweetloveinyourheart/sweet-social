@@ -8,6 +8,7 @@ export enum Gender {
 }
 
 interface Profile {
+    id: number
     username: string
     name: string
     avatar: string | null
@@ -16,6 +17,7 @@ interface Profile {
 }
 
 export interface UserProfile {
+    id: number
     email: string
     isVerified: boolean
     profile: Profile

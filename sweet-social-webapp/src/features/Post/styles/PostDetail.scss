@@ -1,0 +1,162 @@
+.post-detail {
+
+
+    .ant-modal-content {
+        padding: 0;
+    }
+
+    img {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
+
+    h5 {
+        font-size: 14px;
+    }
+
+    .detail {
+        display: flex;
+        flex-direction: column;
+        height: 787.5px;
+
+        &__header {
+            border-bottom: 1px solid #dcdcdc;
+            padding: 16px;
+
+            .author {
+                h5 {
+                    margin: 0;
+                    margin-right: 12px;
+                }
+
+                button {
+                    font-weight: 600;
+                }
+
+                &__desc {
+                    display: flex;
+                    align-items: center;
+                }
+            }
+
+            .settings {
+                button {
+                    color: #222;
+
+                    &:hover {
+                        color: #777;
+                    }
+                }
+            }
+        }
+
+        &__comments {
+            padding: 16px;
+            flex-grow: 1;
+            overflow-y: auto;
+
+            .comment {
+                margin-bottom: 12px;
+                
+                .content {
+                    margin: 0;
+
+                    span {
+                        margin-right: 6px;
+                        font-weight: 600;
+                    }
+                }
+
+                .counter {
+                    margin-top: 8px;
+                    margin-bottom: 0;
+
+                    span {
+                        color: #777;
+                        font-weight: 600;
+                        font-size: 13px;
+                        margin-right: 16px;
+                    }
+                }
+            }
+        }
+
+        &__footer {
+            border-top: 1px solid #dcdcdc;
+            padding: 12px 0;
+            padding-bottom: 0;
+
+            .reaction {
+                border-bottom: 1px solid #dcdcdc;
+                padding: 0 16px;
+                padding-bottom: 12px;
+
+                .behavior {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 8px;
+
+                    button {
+                        font-size: 24px;
+                        color: #222;
+                        padding: 0px;
+                        background-color: transparent;
+
+                        &:hover {
+                            color: #777;
+                        }
+                    }
+
+                    &__left {
+                        button {
+                            margin-right: 12px;
+                        }
+                    }
+                }
+
+                .info {
+                    padding: 0 4px;
+
+                    h5 {
+                        margin: 0;
+                        font-size: 16px;
+                    }
+
+                    span {
+                        color: #777;
+                        font-size: 12px;
+                    }
+                }
+            }
+
+            .comment-box {
+                padding: 12px 16px;
+
+                input {
+                    border: none;
+                    outline: none;
+
+                    &:focus {
+                        border: none;
+                        box-shadow: none;
+                    }
+                }
+
+                button {
+                    background-color: transparent;
+                    font-size: 20px;
+                    padding: 2.25px 0;
+                    width: 100%;
+                }
+
+                .icon {
+                    text-align: left;
+                }
+
+                .send {
+                    text-align: right;
+                }
+            }
+        }
+    }
+}

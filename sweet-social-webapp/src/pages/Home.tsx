@@ -2,18 +2,21 @@ import { Layout } from "antd";
 import { Outlet } from "react-router-dom";
 import SiderBar from "../components/SideBar/SideBar";
 import CreatePostWrapper from "../features/Creation/contexts/CreatePost";
+import PostViewerProvider from "../features/Post/contexts/PostViewer";
 
-function Home() {
+function HomePage() {
     return (
         <CreatePostWrapper>
-            <Layout style={{ background: "#fff", height: "100vh" }}>
-                <SiderBar />
-                <Layout style={{ background: "#fff", height: "100vh", overflowY: "scroll" }}>
-                    <Outlet />
+            <PostViewerProvider>
+                <Layout style={{ background: "#fff", height: "100vh" }}>
+                    <SiderBar />
+                    <Layout style={{ background: "#fff", height: "100vh", overflowY: "scroll" }}>
+                        <Outlet />
+                    </Layout>
                 </Layout>
-            </Layout>
+            </PostViewerProvider>
         </CreatePostWrapper>
     );
 }
 
-export default Home;
+export default HomePage;

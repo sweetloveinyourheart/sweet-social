@@ -1,12 +1,11 @@
 import { FunctionComponent, useEffect, useState } from "react";
 import { Post, getPersonalPosts } from "../services/personal-post";
-import { Col, Row } from "antd";
+import { Col, Empty, Row } from "antd";
 import { HeartOutlined, CommentOutlined } from '@ant-design/icons'
 import '../styles/PersonalPosts.scss'
+import { usePostViewer } from "../contexts/PostViewer";
 
 interface PersonalPostsProps { }
-
-
 
 const PersonalPosts: FunctionComponent<PersonalPostsProps> = () => {
     const [posts, setPosts] = useState<Post[]>([])
@@ -15,6 +14,8 @@ const PersonalPosts: FunctionComponent<PersonalPostsProps> = () => {
         limit: 16,
         totalPages: 1
     })
+
+    const { openPost } = usePostViewer()
 
     useEffect(() => {
         (async () => {
@@ -31,7 +32,7 @@ const PersonalPosts: FunctionComponent<PersonalPostsProps> = () => {
     const renderPosts = () => {
         return posts.map((post, index) => (
             <Col span={8} key={`personal-post_${index}`}>
-                <div className="post">
+                <div className="post" onClick={() => openPost(post)}>
                     <img src={post.medias[0].mediaUrl} alt="image" />
                     <div className="like-cmt-counts">
                         <div className="likes-count">
@@ -52,9 +53,16 @@ const PersonalPosts: FunctionComponent<PersonalPostsProps> = () => {
 
     return (
         <div className="personal-posts">
-            <Row gutter={4}>
-                {renderPosts()}
-            </Row>
+            {posts.length !== 0
+                ? (
+                    <Row gutter={4}>
+                        {renderPosts()}
+                    </Row>
+                )
+                : (
+                    <Empty description="No posts uploaded yet. Check back later for updates!" />
+                )
+            }
         </div>
     );
 }

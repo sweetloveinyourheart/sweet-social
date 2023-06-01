@@ -78,15 +78,15 @@ export default function AuthProvider({ children }: { children: any }) {
         // gain access_token
         (async () => {
             try {
-                const { accessToken } = await refreshToken(rfToken)
-                if (!accessToken) {
+                const token = await refreshToken(rfToken)
+                if (!token.accessToken) {
                     setAccessToken(null)
                     setLoading(false)
                     return;
                 }
 
-                axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
-                setAccessToken(accessToken)
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token.accessToken}`
+                setAccessToken(token.accessToken)
             } catch (error) {
                 setAccessToken(null)
             } finally {
@@ -98,13 +98,13 @@ export default function AuthProvider({ children }: { children: any }) {
         const timer = setInterval(async () => {
             try {
                 const token = await refreshToken(rfToken)
-                if (!token) {
+                if (!token.accessToken) {
                     clearInterval(timer)
                     setAccessToken(null)
                     return;
                 }
-                axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
-                setAccessToken(accessToken)
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token.accessToken}`
+                setAccessToken(token.accessToken)
             } catch (error) {
                 clearInterval(timer)
                 setAccessToken(null)
