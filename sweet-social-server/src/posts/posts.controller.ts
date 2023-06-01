@@ -5,7 +5,7 @@ import { AuthGuard } from 'src/auth/guards/jwt.guard';
 import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { MessageDto } from 'src/common/dto/message.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { PaginationPostDto, PostDto } from './dto/post.dto';
+import { PaginationPostDto, PostDetailDto, PostDto } from './dto/post.dto';
 import { Pagination } from 'nestjs-typeorm-paginate';
 @ApiTags('Posts')
 @Controller('posts')
@@ -56,6 +56,17 @@ export class PostsController {
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
   ): Promise<PaginationPostDto> {
     return await this.postsService.getUserPosts(username, { page, limit })
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Get post by id" })
+  @ApiResponse({ type: PostDetailDto, status: 200 })
+  @Get('/get-by-id/:id')
+  async getPostById(
+    @Param('id') id: number,
+  ): Promise<PostDetailDto> {
+    return await this.postsService.getPostById(id)
   }
 
   @UseGuards(AuthGuard)

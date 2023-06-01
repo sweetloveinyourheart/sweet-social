@@ -7,7 +7,7 @@ import { NewPostDto } from './dto/new-post.dto';
 import { GcpBucketService } from 'src/gcp-bucket/gcp-bucket.service';
 import { MessageDto } from 'src/common/dto/message.dto';
 import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
-import { PaginationPostDto } from './dto/post.dto';
+import { PaginationPostDto, PostDetailDto } from './dto/post.dto';
 import { PostSettings } from './entities/post-settings.entity';
 
 @Injectable()
@@ -29,9 +29,6 @@ export class PostsService {
     }
 
     async createNewPost(userId: number, post: NewPostDto, files: Express.Multer.File[]): Promise<MessageDto> {
-        console.log(post, files);
-        
-
         // Upload media to GCP bucket and create media record
         const medias = await Promise.all(files.map(async (media) => {
             try {
@@ -76,8 +73,35 @@ export class PostsService {
         queryBuilder
             .innerJoinAndSelect('post.medias', 'media')
             .where('post.user.id = :userId', { userId })
+            .orderBy('post.createdAt', 'DESC')
 
         return await paginate(queryBuilder, options)
+    }
+
+    async getPostById(postId: number): Promise<PostDetailDto> {
+        const post = await this.postsRepository.findOne({ 
+            select: {
+                id: true,
+                caption: true,
+                likesCount: true,
+                commentsCount: true,
+                createdAt: true,
+                medias: true,
+                user: {
+                    id: true,
+                    profile: {
+                        username: true,
+                        name: true,
+                        avatar: true
+                    }
+                }
+            },
+            where: { id: postId }, 
+            relations: ['user', 'user.profile', 'medias'] 
+        })
+        if(!post) throw new NotFoundException('Cannot found this post')
+
+        return post
     }
 
     async getUserPosts(username: string, options: IPaginationOptions): Promise<PaginationPostDto> {

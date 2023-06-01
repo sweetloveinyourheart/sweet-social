@@ -28,8 +28,5 @@ export class NewPostDto extends NewPostSettingDto {
     caption: string
 
     @ApiProperty({ type: 'array', minItems: 1, maxItems: 10, items: { format: 'binary', type: 'string' } })
-    @IsNotEmpty()
-    @ArrayMinSize(1)
-    @ArrayMaxSize(10)
     medias: string[]
 }

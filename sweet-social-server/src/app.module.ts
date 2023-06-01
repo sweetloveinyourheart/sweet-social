@@ -8,7 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { GcpBucketModule } from './gcp-bucket/gcp-bucket.module';
 import { PostsModule } from './posts/posts.module';
-import { InteractionsModule } from './interactions/interactions.module';
+import { ReactionsModule } from './reactions/reactions.module';
 
 @Module({
   imports: [
@@ -28,7 +28,7 @@ import { InteractionsModule } from './interactions/interactions.module';
     MailModule,
     GcpBucketModule,
     PostsModule,
-    InteractionsModule
+    ReactionsModule
   ],
   controllers: [AppController],
   providers: [AppService],

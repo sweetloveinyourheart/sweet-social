@@ -1,6 +1,8 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
 import { Profile } from "./profile.entity"
 import { Post } from "src/posts/entities/post.entity"
+import { Like } from "src/reactions/entities/like.entity"
+import { Comment } from "src/reactions/entities/comment.entity"
 
 export enum UserRoles {
     User = "user",
@@ -45,4 +47,10 @@ export class User {
 
     @OneToMany(() => Post, post => post.user)
     posts: Post[]
+
+    @OneToMany(() => Like, like => like.user)
+    likes: Like[]
+
+    @OneToMany(() => Comment, comment => comment.user)
+    comments: Comment[]
 }
