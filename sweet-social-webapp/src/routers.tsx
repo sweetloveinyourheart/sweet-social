@@ -9,6 +9,7 @@ import Main from "./pages/Main";
 import User from "./features/User/components/User";
 import EditProfile from "./features/User/components/EditProfile";
 import Home from "./pages/Home";
+import Explore from "./features/Post/components/Explore/components/Explore";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -16,6 +17,7 @@ const router = createBrowserRouter(
             <Route path="" element={<Main />}>
                 <Route path="" element={<Home />} />
                 <Route path="profile" element={<User />} />
+                <Route path="/explore" element={<Explore />}/>
                 <Route path="accounts/edit" element={<EditProfile />}/>
             </Route>
 

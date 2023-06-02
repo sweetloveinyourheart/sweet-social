@@ -3,11 +3,14 @@ import "./Logo.scss"
 
 interface LogoProps {
     style?: CSSProperties
+    small?: boolean
 }
 
-const Logo: FunctionComponent<LogoProps> = ({ style }) => {
+const Logo: FunctionComponent<LogoProps> = ({ style, small }) => {
     return (
-        <h1 className="app-logo"  style={style}>Sweetbook</h1>
+        <h1 className="app-logo" style={{ ...style, textAlign: small ? "center" : "left" }}>
+            {small ? "S" : "Sweetbook"}
+        </h1>
     );
 }
 

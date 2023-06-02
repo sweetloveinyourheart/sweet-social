@@ -1,10 +1,9 @@
 import { createContext, useCallback, useContext, useState } from "react";
 import PostDetail from "../components/PostDetail/PostDetail";
-import { Post } from "../services/personal-post";
 import { PostDetail as PostDetailInterface, getPostById } from "../services/get-post";
 
 interface PostViewer {
-    openPost: (postData: Post) => void
+    openPost: (postId: number) => void
 }
 
 const PostViewerContext = createContext({} as PostViewer)
@@ -17,9 +16,9 @@ export default function PostViewerProvider({ children }: { children: any }) {
     const [post, setPost] = useState<PostDetailInterface | null>(null)
     const [isOpen, setIsOpen] = useState<boolean>(false)
 
-    const openPost = useCallback(async (postData: Post) => {
+    const openPost = useCallback(async (postId: number) => {
         try {
-            const data = await getPostById(postData.id)
+            const data = await getPostById(postId)
             setPost(data)
             setIsOpen(true)
         } catch (error) {
@@ -29,6 +28,7 @@ export default function PostViewerProvider({ children }: { children: any }) {
 
     const handleClose = useCallback(() => {
         setIsOpen(false)
+        setPost(null)
     }, [])
 
     return (

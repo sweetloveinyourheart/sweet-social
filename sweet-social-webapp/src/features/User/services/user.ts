@@ -21,6 +21,11 @@ export interface UserProfile {
     email: string
     isVerified: boolean
     profile: Profile
+    userStats: {
+        followers: number,
+        following: number,
+        post: number
+    }
 }
 
 export async function getUserProfile(): Promise<UserProfile> {

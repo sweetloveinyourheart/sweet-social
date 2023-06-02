@@ -1,0 +1,33 @@
+.notifications {
+
+    .notification {
+        display: flex;
+        margin-bottom: 16px;
+        cursor: pointer;
+        padding: 8px 24px;
+        border-radius: 8px;
+
+        &:hover {
+            background-color: rgba($color: #222, $alpha: 0.05);
+        }
+
+        .sender-avatar {
+            margin-right: 16px;
+        }
+
+        .content {
+            width: 100%;
+
+            span {
+                font-weight: 600;
+                margin-right: 4px;
+            }
+
+            .timestamp {
+                font-weight: 600;
+                color: #777;
+                font-size: 13px;
+            }
+        }
+    }
+}

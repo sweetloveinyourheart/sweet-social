@@ -29,7 +29,11 @@
                 display: flex;
 
                 .comment-avatar {
-                    width: 50px;
+                    margin-right: 12px;
+                }
+
+                .comment-content {
+                    width: 100%;
                 }
                 
                 .content {

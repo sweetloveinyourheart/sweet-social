@@ -12,9 +12,8 @@ const CommentBox: FunctionComponent<CommentBoxProps> = ({ addComment }) => {
     const [content, setContent] = useState<string>("")
     const { user } = useUser()
 
-    const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        if(!user) return;
+    const sendComment = async () => {
+        if (!user) return;
 
         const newCmt: PostComment = {
             user,
@@ -24,6 +23,12 @@ const CommentBox: FunctionComponent<CommentBoxProps> = ({ addComment }) => {
 
         await addComment(newCmt)
         setContent("")
+    }
+
+    const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+
+        await sendComment()
     }
 
     return (
@@ -36,15 +41,15 @@ const CommentBox: FunctionComponent<CommentBoxProps> = ({ addComment }) => {
                 </Col>
                 <Col span={20}>
                     <form onSubmit={onSubmit}>
-                        <Input 
+                        <Input
                             value={content}
-                            placeholder="Leave a comment" 
+                            placeholder="Leave a comment"
                             onChange={e => setContent(e.target.value)}
                         />
                     </form>
                 </Col>
                 <Col span={2}>
-                    <button className="send">
+                    <button className="send" onClick={() => sendComment()}>
                         <SendOutlined />
                     </button>
                 </Col>

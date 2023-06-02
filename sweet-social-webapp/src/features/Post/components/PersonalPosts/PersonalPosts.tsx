@@ -1,9 +1,8 @@
 import { FunctionComponent, useEffect, useState } from "react";
-import { Post, getPersonalPosts } from "../services/personal-post";
+import { Post, getPersonalPosts } from "../../services/personal-post";
 import { Col, Empty, Row } from "antd";
-import { HeartOutlined, CommentOutlined } from '@ant-design/icons'
-import '../styles/PersonalPosts.scss'
-import { usePostViewer } from "../contexts/PostViewer";
+import '../../styles/PersonalPosts.scss'
+import SinglePost from "./SinglePost";
 
 interface PersonalPostsProps { }
 
@@ -14,8 +13,6 @@ const PersonalPosts: FunctionComponent<PersonalPostsProps> = () => {
         limit: 16,
         totalPages: 1
     })
-
-    const { openPost } = usePostViewer()
 
     useEffect(() => {
         (async () => {
@@ -32,21 +29,7 @@ const PersonalPosts: FunctionComponent<PersonalPostsProps> = () => {
     const renderPosts = () => {
         return posts.map((post, index) => (
             <Col span={8} key={`personal-post_${index}`}>
-                <div className="post" onClick={() => openPost(post)}>
-                    <img src={post.medias[0].mediaUrl} alt="image" />
-                    <div className="like-cmt-counts">
-                        <div className="likes-count">
-                            <HeartOutlined />
-                            &nbsp;
-                            {post.likesCount}
-                        </div>
-                        <div className="comments-count">
-                            <CommentOutlined />
-                            &nbsp;
-                            {post.likesCount}
-                        </div>
-                    </div>
-                </div>
+                <SinglePost post={post} />
             </Col>
         ))
     }

@@ -1,12 +1,12 @@
-import { Avatar, Button, Col, Menu, MenuProps, Row, Typography } from "antd";
+import { Button, Col, Menu, MenuProps, Row, Typography } from "antd";
 import { FunctionComponent, useState } from "react";
-import { UserOutlined, AppstoreOutlined, BookOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, BookOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 import "../styles/User.scss"
 import { useUser } from "../contexts/UserContext";
 import UserSettings from "./UserSettings";
 import { useNavigate } from "react-router-dom";
 import EditAvatar from "./EditAvatar";
-import PersonalPosts from "../../Post/components/PersonalPosts";
+import PersonalPosts from "../../Post/components/PersonalPosts/PersonalPosts";
 
 interface UserProps { }
 
@@ -75,13 +75,13 @@ const User: FunctionComponent<UserProps> = () => {
                     </div>
                     <div className="profile-count">
                         <div className="counter">
-                            <Typography.Text>4 posts</Typography.Text>
+                            <Typography.Text>{user?.userStats.post} posts</Typography.Text>
                         </div>
                         <div className="counter">
-                            <Button type="link">82 Follower</Button>
+                            <Button type="link">{user?.userStats.followers} Follower</Button>
                         </div>
                         <div className="counter">
-                            <Button type="link">22 Following</Button>
+                            <Button type="link">{user?.userStats.following} Following</Button>
                         </div>
                     </div>
                     <div className="profile-name">

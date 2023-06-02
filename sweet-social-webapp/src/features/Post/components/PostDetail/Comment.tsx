@@ -15,7 +15,7 @@ const Comment: FunctionComponent<CommentsProps> = ({ cmt }) => {
                 <Avatar src={cmt.user.profile.avatar} icon={<UserOutlined />} />
             </div>
 
-            <div>
+            <div className="comment-content">
                 <p className="content">
                     <span >
                         {cmt.user.profile.username}

@@ -14,7 +14,7 @@ const NewfeedPost: FunctionComponent<NewfeedPostProps> = ({ post }) => {
     const { openPost } = usePostViewer()
 
     const onViewPost = () => {
-        openPost(post)
+        openPost(post.id)
     }
 
     return (
