@@ -5,13 +5,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Not, Repository } from 'typeorm';
 import { Profile } from './entities/profile.entity';
-import { UserProfileDto } from './dto/user-dto';
+import { UserDetailDto } from './dto/user-dto';
 import { MessageDto } from 'src/common/dto/message.dto';
 import * as bcrypt from 'bcrypt';
 import { GcpBucketService } from 'src/gcp-bucket/gcp-bucket.service';
 import { BasicUserDto } from './dto/basic-info.dto';
 import { Following } from './entities/following.entity';
 import { Follower } from './entities/follower.entity';
+import { PostsService } from 'src/posts/posts.service';
 
 @Injectable()
 export class UsersService {
@@ -20,7 +21,8 @@ export class UsersService {
     @InjectRepository(Profile) private readonly profilesRepository: Repository<Profile>,
     @InjectRepository(Following) private readonly followingRepository: Repository<Following>,
     @InjectRepository(Follower) private readonly followersRepository: Repository<Follower>,
-    private readonly gcpBucketService: GcpBucketService
+    private readonly gcpBucketService: GcpBucketService,
+    private readonly postsService: PostsService
   ) { }
 
   private async hashPassword(pass: string): Promise<string> {
@@ -52,13 +54,18 @@ export class UsersService {
     return newUser;
   }
 
-  async getUserProfile(id: number): Promise<UserProfileDto> {
+  async getUserProfile(id: number, username: string): Promise<UserDetailDto> {
     const user = await this.usersRepository.findOne({
       relations: ['profile'],
-      where: { id }
+      where: { profile: { username } }
     });
 
-    const userProfile: UserProfileDto = {
+    const followers = await this.followersRepository.countBy({ user: { profile: { username } } })
+    const following = await this.followingRepository.countBy({ user: { profile: { username } } })
+    const post = await this.postsService.countPostByUsername(username)
+    const followed = await this.followersRepository.exist({ where: { followerUser: { id }, user: { id: user.id } } })
+
+    const userDetail: UserDetailDto = {
       email: user.email,
       isVerified: user.isVerified,
       profile: {
@@ -67,36 +74,100 @@ export class UsersService {
         avatar: user.profile.avatar,
         bio: user.profile.bio,
         gender: user.profile.gender
+      },
+      userStats: {
+        followers,
+        following,
+        post
+      },
+      followed
+    }
+
+    return userDetail
+  }
+
+  async getProfile(id: number): Promise<UserDetailDto> {
+    const user = await this.usersRepository.findOne({
+      relations: ['profile'],
+      where: { id }
+    });
+
+    const followers = await this.followersRepository.countBy({ user: { id } })
+    const following = await this.followingRepository.countBy({ user: { id } })
+    const post = await this.postsService.countPostByUsername(user.profile.username)
+
+    const userDetail: UserDetailDto = {
+      email: user.email,
+      isVerified: user.isVerified,
+      profile: {
+        username: user.profile.username,
+        name: user.profile.name,
+        avatar: user.profile.avatar,
+        bio: user.profile.bio,
+        gender: user.profile.gender
+      },
+      userStats: {
+        followers,
+        following,
+        post
       }
     }
 
-    return userProfile
+    return userDetail
+  }
+
+  async getBasicUserInfo(id: number, username: string): Promise<BasicUserDto> {
+    const user = await this.usersRepository.findOne({
+      relations: ['profile'],
+      where: {
+        profile: {
+          username
+        }
+      }
+    })
+
+    const followers = await this.followersRepository.countBy({ user: { profile: { username } } })
+    const following = await this.followingRepository.countBy({ user: { profile: { username } } })
+    const post = await this.postsService.countPostByUsername(username)
+    const followed = await this.followersRepository.exist({ where: { followerUser: { id }, user: { id: user.id } } })
+
+    const userInfo: BasicUserDto = {
+      id: user.id,
+      profile: {
+        name: user.profile.name,
+        avatar: user.profile.avatar,
+        username: user.profile.username
+      },
+      userStats: {
+        followers,
+        following,
+        post
+      },
+      followed
+    }
+
+    return userInfo
   }
 
   async getSuggestedAccounts(userId: number): Promise<BasicUserDto[]> {
-    const suggested = await this.usersRepository.find({
-      select: {
-        id: true,
-        profile: {
-          username: true,
-          name: true,
-          avatar: true
-        }
-      },
-      relations: ['profile', 'followers', 'followers.followerUser'],
+    // find user with blue tick
+    const accounts = await this.usersRepository.find({
+      relations: ['profile'],
       where: {
         profile: {
           premium: true
         },
-        id: Not(userId),
-        followers: {
-          followerUser: {
-            id: Not(userId)
-          }
-        }
-      }
+        id: Not(userId)
+      },
+      take: 5
     })
-    return suggested
+
+    // get user basic info (include followers, posts count...)
+    const suggestedList: BasicUserDto[] = await Promise.all(accounts.map(async (acc) => {
+      return await this.getBasicUserInfo(userId, acc.profile.username)
+    }))
+
+    return suggestedList
   }
 
   async findOneById(id: number): Promise<User> {
@@ -176,9 +247,9 @@ export class UsersService {
       throw new NotFoundException('Not found !')
     }
 
-    await this.followersRepository.delete(followerUser)
-    await this.followingRepository.delete(followingUser)
+    await this.followingRepository.remove(followingUser)
+    await this.followersRepository.remove(followerUser)
 
-    return { message: "Follow user successfully !" }
+    return { message: "UnFollow user successfully !" }
   }
 }

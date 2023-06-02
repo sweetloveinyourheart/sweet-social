@@ -1,7 +1,10 @@
-import { Controller, Body, Get, Request, UseGuards, Put, UseInterceptors, UploadedFile, BadRequestException, Param, Delete, Post } from '@nestjs/common';
+import { 
+  Controller, Body, Get, Request, UseGuards, Put, 
+  UseInterceptors, UploadedFile, BadRequestException, Param, Delete, Post 
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UserProfileDto } from './dto/user-dto';
+import { UserDetailDto } from './dto/user-dto';
 import { AuthGuard } from 'src/auth/guards/jwt.guard';
 import { MessageDto } from 'src/common/dto/message.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
@@ -29,12 +32,38 @@ export class UsersController {
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get user profile' })
-  @ApiResponse({ type: UserProfileDto, status: 200 })
-  @Get('/profile')
-  async getUserProfile(@Request() req: Request): Promise<UserProfileDto> {
+  @ApiOperation({ summary: 'Get basic user info by username' })
+  @ApiResponse({ type: BasicUserDto, status: 200 })
+  @Get('/quick-view/:username')
+  async quickViewAccount(
+    @Request() req: Request,
+    @Param('username') username: string
+  ): Promise<BasicUserDto> {
     const id = req['user'].id
-    return await this.usersService.getUserProfile(id)
+    return await this.usersService.getBasicUserInfo(id, username)
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get user profile by username' })
+  @ApiResponse({ type: UserDetailDto, status: 200 })
+  @Get('/profile/:username')
+  async getUserProfile(
+    @Request() req: Request,
+    @Param('username') username: string
+  ): Promise<UserDetailDto> {
+    const id = req['user'].id
+    return await this.usersService.getUserProfile(id, username)
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get personal profile' })
+  @ApiResponse({ type: UserDetailDto, status: 200 })
+  @Get('/profile')
+  async getProfile(@Request() req: Request): Promise<UserDetailDto> {
+    const id = req['user'].id
+    return await this.usersService.getProfile(id)
   }
 
   @UseGuards(AuthGuard)

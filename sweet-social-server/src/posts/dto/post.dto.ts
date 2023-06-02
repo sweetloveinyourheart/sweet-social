@@ -1,7 +1,6 @@
-import { ApiExtraModels, ApiProperty } from "@nestjs/swagger"
+import { ApiProperty } from "@nestjs/swagger"
 import { MediaType } from "../entities/media.entity"
 import { PaginationDto } from "src/common/dto/pagination.dto"
-import { UserProfileDto } from "src/users/dto/user-dto"
 
 class MediaDto {
     @ApiProperty()

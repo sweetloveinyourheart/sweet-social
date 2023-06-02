@@ -38,8 +38,8 @@ export class AuthService {
     }
 
     private async revokeRefreshToken(token: string): Promise<void> {
-        const newToken = this.refreshTokenRepository.create({ token })
-        await this.refreshTokenRepository.delete(newToken)
+        const newToken = await this.refreshTokenRepository.findOneBy({ token })
+        await this.refreshTokenRepository.remove(newToken)
     }
 
     private async checkValidRefreshToken(token: string): Promise<boolean> {

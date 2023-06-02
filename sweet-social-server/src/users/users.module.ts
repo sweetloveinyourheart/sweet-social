@@ -7,11 +7,13 @@ import { Profile } from './entities/profile.entity';
 import { GcpBucketModule } from 'src/gcp-bucket/gcp-bucket.module';
 import { Follower } from './entities/follower.entity';
 import { Following } from './entities/following.entity';
+import { PostsModule } from 'src/posts/posts.module';
 
 @Module({
   imports:[
     GcpBucketModule,
-    TypeOrmModule.forFeature([User, Profile, Follower, Following])
+    TypeOrmModule.forFeature([User, Profile, Follower, Following]),
+    PostsModule
   ],
   controllers: [UsersController],
   providers: [UsersService],

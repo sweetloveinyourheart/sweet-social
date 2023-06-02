@@ -1,14 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
 import { Gender } from "../entities/profile.entity"
 
-export class UserDto {
-    @ApiProperty()
-    email: string
-
-    @ApiProperty()
-    isVerified: boolean
-}
-
 export class ProfileDto {
     @ApiProperty()
     username: string
@@ -26,7 +18,32 @@ export class ProfileDto {
     gender: Gender
 }
 
-export class UserProfileDto extends UserDto {
+export class UserDto {
+    @ApiProperty()
+    email: string
+
+    @ApiProperty()
+    isVerified: boolean
+
     @ApiProperty()
     profile: ProfileDto
+}
+
+export class UserStatistics {
+    @ApiProperty()
+    post: number
+
+    @ApiProperty()
+    followers: number
+
+    @ApiProperty()
+    following: number
+}
+
+export class UserDetailDto extends UserDto {
+    @ApiProperty({ type: UserStatistics })
+    userStats: UserStatistics
+
+    @ApiPropertyOptional()
+    followed?: boolean
 }

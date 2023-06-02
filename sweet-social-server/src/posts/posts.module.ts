@@ -13,6 +13,7 @@ import { PostSettings } from './entities/post-settings.entity';
     GcpBucketModule
   ],
   controllers: [PostsController],
-  providers: [PostsService]
+  providers: [PostsService],
+  exports: [PostsService]
 })
 export class PostsModule {}

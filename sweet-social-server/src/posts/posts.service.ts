@@ -165,4 +165,8 @@ export class PostsService {
 
         return result
     }
+
+    async countPostByUsername(username: string): Promise<number> {
+        return await this.postsRepository.countBy({ user: { profile: { username } } })
+    }
 }
