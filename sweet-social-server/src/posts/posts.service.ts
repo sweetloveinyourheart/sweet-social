@@ -169,6 +169,18 @@ export class PostsService {
         return result
     }
 
+    async explorePosts(options: IPaginationOptions): Promise<PostDetailPagination> {
+        const queryBuilder = this.postsRepository.createQueryBuilder('post')
+
+        queryBuilder
+            .innerJoinAndSelect('post.medias', 'media')
+            .orderBy('post.createdAt', 'DESC')
+
+        const result = await paginate(queryBuilder, options)
+
+        return result
+    }
+
     async countPostByUsername(username: string): Promise<number> {
         return await this.postsRepository.countBy({ user: { profile: { username } } })
     }

@@ -11,7 +11,7 @@ export class NotificationsController {
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @ApiResponse({ type: NotificationDto })
+  @ApiResponse({ type: [NotificationDto] })
   @ApiOperation({ summary: 'Get user notifications' })
   @Get()
   getNotifications(@Request() req) {

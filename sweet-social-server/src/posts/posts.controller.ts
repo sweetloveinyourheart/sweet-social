@@ -30,6 +30,18 @@ export class PostsController {
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
+  @ApiOperation({ summary: "Explore sweetbook posts, include newest posts" })
+  @ApiResponse({ type: PaginationPostDto, status: 200 })
+  @Get('/explore/get-all')
+  async explorePosts(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ): Promise<PaginationPostDto> {
+    return await this.postsService.explorePosts({ page, limit })
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: "Get personal posts" })
   @ApiResponse({ type: PaginationPostDto, status: 200 })
   @Get('/personal/get-all')
