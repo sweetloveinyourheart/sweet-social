@@ -63,7 +63,7 @@ const PostDetail: FunctionComponent<PostDetailProps> = ({ isOpen, handleClose, p
                             </div>
                         </div>
                         <div className="detail__footer">
-                            <PostReaction post={post} />
+                            <PostReaction post={post} onCommentClick={() => {}}/>
                             <CommentBox addComment={addComment} />
                         </div>
                     </div>

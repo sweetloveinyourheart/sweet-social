@@ -1,0 +1,44 @@
+.quick-view {
+    background-color: #fff;
+    padding: 24px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    border-radius: 8px;
+
+    .user-info {
+        display: flex;
+        
+        .user-avatar {
+            width: 75px;
+        }
+
+        .user-name {
+            h5 {
+                margin: 0;
+            }
+
+            p {
+                margin: 0;
+                color: #777;
+            }
+        }
+    }
+
+    .user-stats {
+        h5 {
+            margin-bottom: 6px;
+        }
+        .stats-value {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+    }
+
+    .actions {
+        margin-top: 24px;
+
+        button {
+            width: 100%;
+        }
+    }
+}

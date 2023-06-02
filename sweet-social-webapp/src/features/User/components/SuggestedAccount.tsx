@@ -1,26 +1,23 @@
 import { Avatar, Button, Col, Row, Typography, message } from "antd";
 import { FunctionComponent, useEffect, useState } from "react";
 import "../styles/SuggestedAccount.scss"
-import { BasicUser, getSuggestedAccounts } from "../services/recommend";
+import { getSuggestedAccounts } from "../services/recommend";
 import { followUser, unfollowUser } from "../services/interaction";
+import { BasicUserInfo } from "../services/quick-view";
 
 interface SuggestedAccountProps { }
 
 const SuggestedAccount: FunctionComponent<SuggestedAccountProps> = () => {
-    const [accounts, setAccounts] = useState<{ followed: boolean, account: BasicUser }[]>([])
+    const [accounts, setAccounts] = useState<BasicUserInfo[]>([])
 
     useEffect(() => {
         (async () => {
             const data = await getSuggestedAccounts()
-            const accountList = data.map((acc) => ({
-                followed: false,
-                account: acc
-            }))
-            setAccounts(accountList)            
+            setAccounts(data)            
         })()
     }, [])
 
-    const onFollow = async (user: BasicUser, index: number) => {
+    const onFollow = async (user: BasicUserInfo, index: number) => {
         try {
             await followUser(user.id)
 
@@ -34,7 +31,7 @@ const SuggestedAccount: FunctionComponent<SuggestedAccountProps> = () => {
         }
     }
 
-    const onUnfollow = async (user: BasicUser, index: number) => {
+    const onUnfollow = async (user: BasicUserInfo, index: number) => {
         try {
             await unfollowUser(user.id)
 
@@ -57,15 +54,15 @@ const SuggestedAccount: FunctionComponent<SuggestedAccountProps> = () => {
                 <div className="account" key={`suggested-account_${index}`}>
                     <Row>
                         <Col span={4}>
-                            <Avatar size={"large"} src={item.account.profile.avatar} />
+                            <Avatar size={"large"} src={item.profile.avatar} />
                         </Col>
                         <Col span={16}>
                             <div className="account-info">
                                 <Typography.Title level={5}>
-                                    {item.account.profile.username}
+                                    {item.profile.username}
                                 </Typography.Title>
                                 <p>
-                                    {item.account.profile.name}
+                                    {item.profile.name}
                                 </p>
                             </div>
                         </Col>
@@ -73,13 +70,13 @@ const SuggestedAccount: FunctionComponent<SuggestedAccountProps> = () => {
                             {item.followed
                                 ? (
                                     <div className="account-follow">
-                                        <Button type="link" onClick={() => onUnfollow(item.account, index)}>
-                                            Unfollow
+                                        <Button type="link" onClick={() => onUnfollow(item, index)}>
+                                            Following
                                         </Button>
                                     </div>
                                 )
                                 : (
-                                    <div className="account-follow" onClick={() => onFollow(item.account, index)}>
+                                    <div className="account-follow" onClick={() => onFollow(item, index)}>
                                         <Button type="link">
                                             Follow
                                         </Button>
