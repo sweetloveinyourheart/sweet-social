@@ -4,6 +4,7 @@ import { Avatar, Button, Col, Row, Skeleton, Typography, message } from "antd";
 import { UserOutlined, MessageOutlined } from '@ant-design/icons'
 import "../../styles/QuickView.scss"
 import { followUser, unfollowUser } from "../../../User/services/interaction";
+import { useUser } from "../../../User/contexts/UserContext";
 
 interface QuickViewProps {
     username: string
@@ -11,6 +12,8 @@ interface QuickViewProps {
 
 const QuickView: FunctionComponent<QuickViewProps> = ({ username }) => {
     const [user, setUser] = useState<BasicUserInfo | null>(null)
+
+    const { user: myself } = useUser()
 
     useEffect(() => {
         (async () => {
@@ -21,7 +24,7 @@ const QuickView: FunctionComponent<QuickViewProps> = ({ username }) => {
 
     const onFollow = async () => {
         try {
-            if(!user) return;
+            if (!user) return;
 
             await followUser(user.id)
 
@@ -35,7 +38,7 @@ const QuickView: FunctionComponent<QuickViewProps> = ({ username }) => {
 
     const onUnfollow = async () => {
         try {
-            if(!user) return;
+            if (!user) return;
 
             await unfollowUser(user.id)
 
@@ -88,19 +91,24 @@ const QuickView: FunctionComponent<QuickViewProps> = ({ username }) => {
                             </Col>
                         </Row>
                     </div>
-                    <div className="actions">
-                        <Row gutter={12}>
-                            <Col span={12}>
-                                <Button type="primary" icon={<MessageOutlined />}>Message</Button>
-                            </Col>
-                            <Col span={12}>
-                                {user.followed
-                                    ? <Button type="dashed" onClick={onUnfollow}>Unfollow</Button>
-                                    : <Button type="default" onClick={onFollow}>Follow</Button>
-                                }
-                            </Col>
-                        </Row>
-                    </div>
+                    {myself?.profile.username !== user.profile.username
+                        ? (
+                            <div className="actions">
+                                <Row gutter={12}>
+                                    <Col span={12}>
+                                        <Button type="primary" icon={<MessageOutlined />}>Message</Button>
+                                    </Col>
+                                    <Col span={12}>
+                                        {user.followed
+                                            ? <Button type="dashed" onClick={onUnfollow}>Unfollow</Button>
+                                            : <Button type="default" onClick={onFollow}>Follow</Button>
+                                        }
+                                    </Col>
+                                </Row>
+                            </div>
+                        )
+                        : null
+                    }
                 </div>
             )
             : (
