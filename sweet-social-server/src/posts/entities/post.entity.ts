@@ -5,6 +5,7 @@ import { PostSettings } from "./post-settings.entity";
 import { Like } from "src/reactions/entities/like.entity";
 import { Comment } from "src/reactions/entities/comment.entity";
 import { Notification } from "src/notifications/entities/notification.entity";
+import { Saved } from "src/reactions/entities/saved.entity";
 
 @Entity()
 export class Post {
@@ -41,4 +42,7 @@ export class Post {
 
     @OneToMany(() => Notification, notification => notification.post)
     notifications: Notification[]
+
+    @OneToMany(() => Saved, saved => saved.post)
+    saved: Saved[]
 }

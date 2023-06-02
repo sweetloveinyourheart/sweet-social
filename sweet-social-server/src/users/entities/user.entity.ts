@@ -6,6 +6,7 @@ import { Comment } from "src/reactions/entities/comment.entity"
 import { Notification } from "src/notifications/entities/notification.entity"
 import { Following } from "./following.entity"
 import { Follower } from "./follower.entity"
+import { Saved } from "src/reactions/entities/saved.entity"
 
 export enum UserRoles {
     User = "user",
@@ -50,6 +51,9 @@ export class User {
 
     @OneToMany(() => Post, post => post.user)
     posts: Post[]
+    
+    @OneToMany(() => Saved, saved => saved.user)
+    saved: Saved[]
 
     @OneToMany(() => Like, like => like.user)
     likes: Like[]

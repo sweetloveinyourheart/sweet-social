@@ -22,6 +22,6 @@ export class Notification {
     @ManyToOne(() => User, user => user.sentNotifications)
     sender: User
 
-    @ManyToOne(() => Post, post => post.notifications)
+    @ManyToOne(() => Post, post => post.notifications, { onDelete: 'CASCADE' })
     post: Post
 }

@@ -1,14 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/guards/jwt.guard';
+import { NotificationDto } from './dto/notification.dto';
 
 @ApiTags('Notifications')
 @Controller('notifications')
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiResponse({ type: NotificationDto })
+  @ApiOperation({ summary: 'Get user notifications' })
   @Get()
-  findAll() {
-    return this.notificationsService.findAll();
+  getNotifications(@Request() req) {
+    const userId = req['user'].id
+    return this.notificationsService.getNotifications(userId);
   }
 }

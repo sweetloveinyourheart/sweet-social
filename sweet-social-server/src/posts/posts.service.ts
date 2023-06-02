@@ -10,6 +10,8 @@ import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 import { PaginationPostDto } from './dto/post.dto';
 import { PostSettings } from './entities/post-settings.entity';
 import { PostDetailDto, PostDetailPagination } from './dto/post-detail.dto';
+import { ReactionsService } from 'src/reactions/reactions.service';
+import { NewCommentDto } from '../reactions/dto/comment.dto';
 
 @Injectable()
 export class PostsService {
@@ -17,7 +19,8 @@ export class PostsService {
         @InjectRepository(Post) private readonly postsRepository: Repository<Post>,
         @InjectRepository(Media) private readonly mediasRepository: Repository<Media>,
         @InjectRepository(Media) private readonly postSettingsRepository: Repository<PostSettings>,
-        private readonly gcpBucketService: GcpBucketService
+        private readonly gcpBucketService: GcpBucketService,
+        private readonly reactionsService: ReactionsService
     ) { }
 
     private getMediaFileType(minetype: string): MediaType {
@@ -168,5 +171,50 @@ export class PostsService {
 
     async countPostByUsername(username: string): Promise<number> {
         return await this.postsRepository.countBy({ user: { profile: { username } } })
+    }
+
+    async likePost(userId: number, postId: number): Promise<MessageDto> {
+        const post = await this.postsRepository.findOne({ where: { id: postId }, relations: ['user'] })
+        if (!post) {
+            throw new NotFoundException('Post not found!')
+        }
+
+        // save like record
+        await this.reactionsService.likePost(userId, post)
+
+        // increase likes count by 1
+        await this.postsRepository.update({ id: post.id }, { likesCount: ++post.likesCount })
+
+        return { message: "Post liked !" }
+    }
+
+    async dislikePost(userId: number, postId: number): Promise<MessageDto> {
+        const post = await this.postsRepository.findOne({ where: { id: postId }, relations: ['user'] })
+        if (!post) {
+            throw new NotFoundException('Post not found!')
+        }
+
+        // save like record
+        await this.reactionsService.dislikePost(userId, post)
+
+        // decrease likes count by 1
+        await this.postsRepository.update({ id: post.id }, { likesCount: --post.likesCount })
+
+        return { message: "Post disliked !" }
+    }
+
+    async commentOnPost(userId: number, postId: number, cmt: NewCommentDto): Promise<MessageDto> {        
+        const post = await this.postsRepository.findOne({ where: { id: postId }, relations: ['user'] })
+        if (!post) {
+            throw new NotFoundException('Post not found!')
+        }
+
+        // save like record
+        await this.reactionsService.commentOnPost(userId, post, cmt.content)
+
+        // increase comments count by 1
+        await this.postsRepository.update({ id: post.id }, { commentsCount: ++post.commentsCount })
+
+        return { message: `You have commented on this post successfully` }
     }
 }

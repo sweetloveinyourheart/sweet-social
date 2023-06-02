@@ -7,6 +7,7 @@ import { MessageDto } from 'src/common/dto/message.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { PaginationPostDto } from './dto/post.dto';
 import { PostDetailDto } from './dto/post-detail.dto';
+import { NewCommentDto } from '../reactions/dto/comment.dto';
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -25,25 +26,6 @@ export class PostsController {
   ): Promise<PaginationPostDto> {
     const userId = req['user'].id
     return await this.postsService.getNewsfeedPosts(userId, { page, limit })
-  }
-
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth()
-  @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Upload your post' })
-  @UseInterceptors(FilesInterceptor('medias', 10, {
-    fileFilter(req, file, callback) {
-      if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
-        callback(null, true); // Accept the file with image format
-      } else {
-        callback(new BadRequestException('Invalid file type'), false); // Reject the file
-      }
-    },
-  }))
-  @Post('/new')
-  async createNewPost(@Request() req, @UploadedFiles() files: Express.Multer.File[], @Body() post: NewPostDto): Promise<any> {
-    const userId = req['user'].id
-    return await this.postsService.createNewPost(userId, post, files)
   }
 
   @UseGuards(AuthGuard)
@@ -82,6 +64,55 @@ export class PostsController {
     @Param('id') id: number,
   ): Promise<PostDetailDto> {
     return await this.postsService.getPostById(id)
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Upload your post' })
+  @UseInterceptors(FilesInterceptor('medias', 10, {
+    fileFilter(req, file, callback) {
+      if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
+        callback(null, true); // Accept the file with image format
+      } else {
+        callback(new BadRequestException('Invalid file type'), false); // Reject the file
+      }
+    },
+  }))
+  @Post('/new')
+  async createNewPost(@Request() req, @UploadedFiles() files: Express.Multer.File[], @Body() post: NewPostDto): Promise<any> {
+    const userId = req['user'].id
+    return await this.postsService.createNewPost(userId, post, files)
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Like a post" })
+  @ApiResponse({ type: MessageDto, status: 200 })
+  @Post('/like/:postId')
+  async likePost(@Request() req, @Param('postId') postId: number) {
+    const userId = req['user'].id
+    return await this.postsService.likePost(userId, postId)
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Comment on a post" })
+  @ApiResponse({ type: MessageDto, status: 200 })
+  @Post('/comment/:postId')
+  async commentOnPost(@Request() req, @Param('postId') postId: number, @Body() cmt: NewCommentDto) {
+    const userId = req['user'].id
+    return await this.postsService.commentOnPost(userId, postId, cmt)
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Dislike a post" })
+  @ApiResponse({ type: MessageDto, status: 200 })
+  @Delete('/dislike/:postId')
+  async dislikePost(@Request() req, @Param('postId') postId: number) {
+    const userId = req['user'].id
+    return await this.postsService.dislikePost(userId, postId)
   }
 
   @UseGuards(AuthGuard)

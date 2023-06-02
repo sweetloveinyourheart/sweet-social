@@ -13,9 +13,9 @@ export class Comment {
     @Column()
     content: string;
 
-    @ManyToOne(() => Post, post => post.comments)
+    @ManyToOne(() => Post, post => post.comments, { onDelete: 'CASCADE' })
     post: Post
 
     @ManyToOne(() => User, user => user.comments)
-    user: Post
+    user: User
 }
