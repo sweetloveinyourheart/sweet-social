@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { UserDto } from "src/users/dto/user-dto"
+import { PaginationDto } from "src/common/dto/pagination.dto"
+import { ShortUserInfo } from "src/users/dto/basic-info.dto"
 
 export class ChatboxMessageDto {
     @ApiProperty()
@@ -8,8 +9,8 @@ export class ChatboxMessageDto {
     @ApiProperty()
     content: string
 
-    @ApiProperty({ type: UserDto })
-    user: UserDto
+    @ApiProperty({ type: ShortUserInfo })
+    user: ShortUserInfo
 
     @ApiProperty()
     createdAt: Date
@@ -25,9 +26,28 @@ export class ChatboxDto {
     @ApiProperty({ type: [ChatboxMessageDto] })
     messages: ChatboxMessageDto[]
 
-    @ApiProperty({ type: [UserDto] })
-    members: UserDto[]
+    @ApiProperty({ type: [ShortUserInfo] })
+    members: ShortUserInfo[]
 
     @ApiProperty()
     createdAt: Date
+}
+
+export class ChatboxInfoDto {
+    @ApiProperty()
+    id: number
+
+    @ApiProperty()
+    chatboxId: string
+
+    @ApiProperty({ type: [ShortUserInfo] })
+    members: ShortUserInfo[]
+
+    @ApiProperty()
+    createdAt: Date
+}
+
+export class PaginationMessageDto extends PaginationDto<ChatboxMessageDto> {
+    @ApiProperty({ type: [ChatboxMessageDto] })
+    items: ChatboxMessageDto[]
 }

@@ -4,14 +4,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
 import { Not, Repository } from 'typeorm';
 import { NotificationDto } from './dto/notification.dto';
+import { NotificationsGateway } from './notifications.gateway';
 
 @Injectable()
 export class NotificationsService {
   constructor(
-    @InjectRepository(Notification) private readonly notificationsRepository: Repository<Notification>
+    @InjectRepository(Notification) private readonly notificationsRepository: Repository<Notification>,
+    private readonly notificationsGateway: NotificationsGateway
   ) { }
 
-  async newPostNotification(content: string, senderId: number, post: Post) {
+  async newPostNotification(content: string, senderId: number, post: Post, type: 'like' | 'comment') {
     const newNoti = this.notificationsRepository.create({
       content,
       sender: {
@@ -25,12 +27,15 @@ export class NotificationsService {
 
     await this.notificationsRepository.save(newNoti)
 
+    // send notification to post owner
+    this.notificationsGateway.sendPostNotification(post.user.profile.username, { type, postId: post.id })
+
     return true;
   }
 
   async getNotifications(userId: number): Promise<NotificationDto[]> {
     const notifications = await this.notificationsRepository.find({
-      relations: ['sender', 'sender.profile','post'],
+      relations: ['sender', 'sender.profile', 'post'],
       where: {
         recipient: { id: userId },
         sender: {

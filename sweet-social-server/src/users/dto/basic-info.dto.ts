@@ -12,13 +12,15 @@ class BasicProfileDto {
     avatar: string | null
 }
 
-export class BasicUserDto {
+export class ShortUserInfo {
     @ApiProperty()
     id: number
 
     @ApiProperty()
     profile: BasicProfileDto
+}
 
+export class BasicUserDto extends ShortUserInfo {
     @ApiProperty({ type: UserStatistics })
     userStats: UserStatistics
 

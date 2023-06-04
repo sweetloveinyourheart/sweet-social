@@ -30,7 +30,7 @@ export class ReactionsService {
 
         // send notification to post owner
         const notificationContent: string = `like your post`
-        await this.notificationsService.newPostNotification(notificationContent, userId, post)
+        await this.notificationsService.newPostNotification(notificationContent, userId, post, 'like')
 
         return { message: 'Post liked!' }
     }
@@ -46,7 +46,7 @@ export class ReactionsService {
 
         // send notification to post owner
         const notificationContent: string = `commented on your post`
-        await this.notificationsService.newPostNotification(notificationContent, userId, post)
+        await this.notificationsService.newPostNotification(notificationContent, userId, post, 'comment')
 
         return { message: 'Post liked!' }
     }

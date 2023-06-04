@@ -186,7 +186,7 @@ export class PostsService {
     }
 
     async likePost(userId: number, postId: number): Promise<MessageDto> {
-        const post = await this.postsRepository.findOne({ where: { id: postId }, relations: ['user'] })
+        const post = await this.postsRepository.findOne({ where: { id: postId }, relations: ['user', 'user.profile'] })
         if (!post) {
             throw new NotFoundException('Post not found!')
         }
@@ -216,7 +216,7 @@ export class PostsService {
     }
 
     async commentOnPost(userId: number, postId: number, cmt: NewCommentDto): Promise<MessageDto> {        
-        const post = await this.postsRepository.findOne({ where: { id: postId }, relations: ['user'] })
+        const post = await this.postsRepository.findOne({ where: { id: postId }, relations: ['user', 'user.profile'] })
         if (!post) {
             throw new NotFoundException('Post not found!')
         }

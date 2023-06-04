@@ -5,8 +5,9 @@ import { In, Repository } from 'typeorm';
 import { Message } from './entities/Message.entity';
 import { SingleChatboxDto, SingleConnectDto } from './dto/connect-chatbox.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { ChatboxDto } from './dto/chatbox.dto';
+import { ChatboxDto, ChatboxInfoDto, PaginationMessageDto } from './dto/chatbox.dto';
 import { MessagePayload } from './payload/chatbox.payload';
+import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class MessagesService {
@@ -87,7 +88,7 @@ export class MessagesService {
         return chatboxes
     }
 
-    async getChatboxData(userId: number, chatboxId: string): Promise<ChatboxDto> {
+    async getChatboxInfo(userId: number, chatboxId: string): Promise<ChatboxInfoDto> {
         // only user joined in the chatbox can get data from it
         const exist = await this.chatboxesRepository.findOneBy({ chatboxId, members: { id: userId } })
         if (!exist) throw new ForbiddenException('No permission !')
@@ -101,19 +102,6 @@ export class MessagesService {
                 id: true,
                 chatboxId: true,
                 createdAt: true,
-                messages: {
-                    id: true,
-                    content: true,
-                    createdAt: true,
-                    user: {
-                        id: true,
-                        profile: {
-                            username: true,
-                            name: true,
-                            avatar: true
-                        }
-                    }
-                },
                 members: {
                     id: true,
                     profile: {
@@ -126,6 +114,23 @@ export class MessagesService {
         })
 
         return chatbox
+    }
+
+    async getChatboxMessages(userId: number, chatboxId: string, options: IPaginationOptions): Promise<PaginationMessageDto> {
+        // only user joined in the chatbox can get data from it
+        const exist = await this.chatboxesRepository.findOneBy({ chatboxId, members: { id: userId } })
+        if (!exist) throw new ForbiddenException('No permission !')
+
+        const qb = this.messagesRepository.createQueryBuilder('message')
+        qb
+            .leftJoin('message.user', 'user')
+            .innerJoin('user.profile', 'profile')
+            .leftJoin('message.chatbox', 'chatbox')
+            .where('chatbox.chatboxId = :chatboxId', { chatboxId })
+            .orderBy('message.createdAt', 'DESC')
+            .select(['message', 'user.id', 'profile'])
+
+        return await paginate(qb, options)
     }
 
     async saveMessage(userId: number, message: MessagePayload): Promise<Message> {
@@ -160,5 +165,18 @@ export class MessagesService {
             }
         })
         return msg
+    }
+
+    async getChatboxMembers(msgId: number) {
+        const querybuilder = this.messagesRepository.createQueryBuilder('message')
+        const msg = await querybuilder
+            .leftJoin('message.chatbox', 'cb')
+            .leftJoin('cb.members', 'mbs')
+            .leftJoin('mbs.profile', 'mprofile')
+            .where('message.id = :msgId', { msgId })
+            .select(['message.id', 'cb.id', 'mbs.id', 'mprofile.username'])
+            .getOne()
+
+        return msg.chatbox.members
     }
 }

@@ -45,8 +45,13 @@ export class MessagesGateway {
       const user = socket['user']
 
       const message = await this.messagesService.saveMessage(user.id, payload)
+      socket.to(chatboxId).emit('message-received', { message }); // send msg to common chat box
 
-      socket.to(chatboxId).emit('message-received', { message });
+      const msgMembers = await this.messagesService.getChatboxMembers(message.id)
+
+      msgMembers.forEach((member) => {
+        socket.to(member.profile.username).emit('received-message-reminder', { chatboxId })
+      })
 
     } catch (error) {
       throw new WsException('An error occurred when sending the message!')
@@ -61,7 +66,7 @@ export class MessagesGateway {
     @MessageBody() payload: ChatboxPayload
   ): Promise<void> {
     const user = socket['user']
-    
+
     socket.leave(payload.chatboxId)
     socket.to(payload.chatboxId).emit('user-left', { username: user.username })
 

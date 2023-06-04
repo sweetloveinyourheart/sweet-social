@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, Param, ParseIntPipe, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { SingleChatboxDto, SingleConnectDto } from './dto/connect-chatbox.dto';
-import { ChatboxDto } from './dto/chatbox.dto';
+import { ChatboxDto, ChatboxInfoDto, PaginationMessageDto } from './dto/chatbox.dto';
 import { AuthGuard } from 'src/auth/guards/jwt.guard';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -37,12 +37,29 @@ export class MessagesController {
 
     @UseGuards(AuthGuard)
     @ApiBearerAuth()
-    @ApiResponse({ type: ChatboxDto })
-    @ApiOperation({ summary: 'Get chatbox data - include messages, members' })
-    @Get('data/:chatboxId')
-    async getChatboxData(@Request() req, @Param('chatboxId') chatboxId: string): Promise<ChatboxDto> {
+    @ApiResponse({ type: ChatboxInfoDto })
+    @ApiOperation({ summary: 'Get chatbox basic info' })
+    @Get('info/:chatboxId')
+    async getChatboxInfo(@Request() req, @Param('chatboxId') chatboxId: string): Promise<ChatboxInfoDto> {
         const userId = req['user'].id
 
-        return this.messagesService.getChatboxData(userId, chatboxId);
+        return this.messagesService.getChatboxInfo(userId, chatboxId);
+    }
+
+    @UseGuards(AuthGuard)
+    @ApiBearerAuth()
+    @ApiResponse({ type: PaginationMessageDto })
+    @ApiOperation({ summary: 'Get chatbox messages' })
+    @Get('get-all/:chatboxId')
+    async getChatboxMessages(
+        @Request() req, 
+        @Param('chatboxId') chatboxId: string,
+        @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+        @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+
+    ): Promise<PaginationMessageDto> {
+        const userId = req['user'].id
+
+        return this.messagesService.getChatboxMessages(userId, chatboxId, { page, limit });
     }
 }
