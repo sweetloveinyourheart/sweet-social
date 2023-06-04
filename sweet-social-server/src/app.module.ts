@@ -10,6 +10,7 @@ import { GcpBucketModule } from './gcp-bucket/gcp-bucket.module';
 import { PostsModule } from './posts/posts.module';
 import { ReactionsModule } from './reactions/reactions.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { NotificationsModule } from './notifications/notifications.module';
     GcpBucketModule,
     PostsModule,
     ReactionsModule,
-    NotificationsModule
+    NotificationsModule,
+    MessagesModule
   ],
   controllers: [AppController],
   providers: [

@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
 import { Profile } from "./profile.entity"
 import { Post } from "src/posts/entities/post.entity"
 import { Like } from "src/reactions/entities/like.entity"
@@ -7,6 +7,8 @@ import { Notification } from "src/notifications/entities/notification.entity"
 import { Following } from "./following.entity"
 import { Follower } from "./follower.entity"
 import { Saved } from "src/reactions/entities/saved.entity"
+import { ChatBox } from "src/messages/entities/Chatbox.entity"
+import { Message } from "src/messages/entities/Message.entity"
 
 export enum UserRoles {
     User = "user",
@@ -72,4 +74,10 @@ export class User {
 
     @OneToMany(() => Following, following => following.user)
     following: Following[]
+
+    @ManyToMany(() => ChatBox, chatbox => chatbox.members)
+    chatboxs: ChatBox[]
+
+    @OneToMany(() => Message, message => message.user)
+    messages: Message[]
 }

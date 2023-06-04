@@ -175,7 +175,7 @@ export class UsersService {
   }
 
   async findOneByEmail(email: string): Promise<User> {
-    return await this.usersRepository.findOneBy({ email })
+    return await this.usersRepository.findOne({ relations: ['profile'], where: { email } })
   }
 
   async updateUser(userId: number, updateData: Partial<User>) {

@@ -61,7 +61,7 @@ export class AuthService {
             throw new UnauthorizedException('Username or password is wrong');
         }
 
-        const payload = { sub: user.id, role: user.role };
+        const payload = { sub: user.id, username: user.profile.username, role: user.role };
         const { accessToken, refreshToken } = await this.generateTokens(payload)
 
         await this.storeRefreshToken(refreshToken)
@@ -72,7 +72,7 @@ export class AuthService {
     async signUp(user: SignUpDto): Promise<AuthDto> {
         const newUser = await this.usersService.create(user);
 
-        const payload = { sub: newUser.id, role: newUser.role };
+        const payload = { sub: newUser.id, username: newUser.profile.username, role: newUser.role };
         const { accessToken, refreshToken } = await this.generateTokens(payload)
 
         await this.storeRefreshToken(refreshToken)
@@ -109,7 +109,7 @@ export class AuthService {
         try {
             const decoded = await this.jwtService.verifyAsync(refreshToken)
 
-            const payload = { sub: decoded.sub, role: decoded.role };
+            const payload = { sub: decoded.sub, username: decoded.username, role: decoded.role };
             const { accessToken } = await this.generateTokens(payload)
 
             return { accessToken }
