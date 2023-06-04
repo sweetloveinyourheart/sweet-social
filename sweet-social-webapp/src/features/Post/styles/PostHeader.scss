@@ -10,7 +10,8 @@
         &__left {
             display: flex;
             align-items: center;
-
+            flex: 0 0 auto;
+            width: 80%;
 
             h5 {
                 margin: 0;
@@ -39,16 +40,5 @@
         }
 
 
-    }
-
-    .settings {
-        button {
-            color: #222;
-            padding-right: 0;
-
-            &:hover {
-                color: #777;
-            }
-        }
     }
 }

@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../Auth/contexts/AuthContext";
-import { UserProfile, getUserProfile } from "../services/user";
+import { UserProfile, getProfile } from "../services/user";
 import PageLoading from "../../../components/Loading/PageLoading";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -25,7 +25,7 @@ export default function UserProvider({ children }: { children: any }) {
 
     const getUser = async () => {
         try {
-            const userData = await getUserProfile()
+            const userData = await getProfile()
             setUser(userData)
         } catch (error) {
             navigate('/auth/sign-in')

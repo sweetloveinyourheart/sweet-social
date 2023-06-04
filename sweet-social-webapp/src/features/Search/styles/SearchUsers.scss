@@ -1,0 +1,42 @@
+.search-users {
+    height: calc(100vh - 80px);
+    overflow-y: scroll;
+
+    .search-form {
+        padding: 0 24px;
+
+        input {
+            background-color: #eee;
+            padding: 8px 24px;
+            border-radius: 12px;
+            border: none;
+            outline: none;
+    
+            &:focus {
+                box-shadow: none;
+            }
+        }
+    }
+
+    .user-list {
+        .user {
+            display: flex;
+            padding: 12px 24px;
+            transition: 0.2s;
+
+            &:hover {
+                background-color: rgba($color: #000000, $alpha: 0.05);
+            }
+
+            .avatar {
+                margin-right: 12px;
+            }
+
+            .info {
+                h5 {
+                    margin: 0;
+                }
+            }
+        }
+    }
+}

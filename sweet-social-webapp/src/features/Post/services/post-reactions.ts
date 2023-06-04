@@ -16,6 +16,16 @@ export async function dislikePost(postId: number) {
     return data
 }
 
+export async function savePost(postId: number) {
+    const { data } = await axios.post(`${BASE_URL}/posts/save/${postId}`)
+    return data
+}
+
+export async function unbookmarkPost(postId: number) {
+    const { data } = await axios.delete(`${BASE_URL}/posts/unbookmark/${postId}`)
+    return data
+}
+
 export async function getPostReaction(postId: number): Promise<PostReaction> {
     const { data } = await axios.get(`${BASE_URL}/reactions/post/user-reaction/${postId}`)
     return data

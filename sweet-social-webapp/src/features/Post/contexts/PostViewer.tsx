@@ -4,6 +4,7 @@ import { PostDetail as PostDetailInterface, getPostById } from "../services/get-
 
 interface PostViewer {
     openPost: (postId: number) => void
+    closePost: () => void
 }
 
 const PostViewerContext = createContext({} as PostViewer)
@@ -26,15 +27,15 @@ export default function PostViewerProvider({ children }: { children: any }) {
         }
     }, [])
 
-    const handleClose = useCallback(() => {
+    const closePost = useCallback(() => {
         setIsOpen(false)
         setPost(null)
     }, [])
 
     return (
-        <PostViewerContext.Provider value={{ openPost }}>
+        <PostViewerContext.Provider value={{ openPost, closePost }}>
             {children}
-            {(isOpen && post) ? <PostDetail isOpen={isOpen} handleClose={handleClose} post={post} /> : null}
+            {(isOpen && post) ? <PostDetail isOpen={isOpen} handleClose={closePost} post={post} /> : null}
         </PostViewerContext.Provider>
     )
 }

@@ -4,7 +4,7 @@ import { HeartOutlined, HeartFilled, CommentOutlined, BookOutlined, BookFilled }
 import { Skeleton, Typography, message } from "antd";
 import { PostDetail } from "../../services/get-post";
 import "../../styles/PostReaction.scss"
-import { dislikePost, getPostReaction, likePost } from "../../services/post-reactions";
+import { dislikePost, getPostReaction, likePost, savePost, unbookmarkPost } from "../../services/post-reactions";
 
 interface PostReactionProps {
     post: PostDetail
@@ -48,13 +48,25 @@ const PostReaction: FunctionComponent<PostReactionProps> = ({ post, onCommentCli
             }
 
             setLiked(s => !s)
-        } catch (error) {
-            message.error('Something went wrong, please try again !')
+        } catch (error: any) {
+            message.error(error.response?.data?.message || `An error occurred: ${error.message}`)
         }
     }
 
-    const handleSaveClick = () => {
-        setSaved(s => !s)
+    const handleSaveClick = async () => {
+        try {
+            if (saved) {
+                await unbookmarkPost(post.id)
+            }
+            else {
+                await savePost(post.id)
+            }
+
+            setSaved(s => !s)
+
+        } catch (error: any) {
+            message.error(error.response?.data?.message || `An error occurred: ${error.message}`)
+        }
     }
 
     return (

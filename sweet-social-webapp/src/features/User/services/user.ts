@@ -28,8 +28,13 @@ export interface UserProfile {
     }
 }
 
-export async function getUserProfile(): Promise<UserProfile> {
+export async function getProfile(): Promise<UserProfile> {
     const { data } = await axios.get(`${BASE_URL}/users/profile`)
+    return data
+}
+
+export async function getUserProfile(username: string): Promise<UserProfile> {
+    const { data } = await axios.get(`${BASE_URL}/users/profile/${username}`)
     return data
 }
 

@@ -15,6 +15,7 @@ import "./SideBar.scss"
 import Logo from "../Logo/Logo";
 import { useCreation } from "../../features/Creation/contexts/CreatePost";
 import Notifications from "../../features/Notifications/components/Notifications";
+import SearchUsers from "../../features/Search/components/SearchUsers";
 
 const { Sider } = Layout
 
@@ -105,7 +106,10 @@ const SiderBar: FunctionComponent<SiderBarProps> = () => {
         switch (sidebarBoxMode) {
             case SidebarBoxMode.Notification:
                 return <Notifications />
-        
+            
+            case SidebarBoxMode.Search:
+                return <SearchUsers />
+
             default:
                 return null
         }

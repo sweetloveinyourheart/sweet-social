@@ -12,13 +12,15 @@ import Home from "./pages/Home";
 import Explore from "./features/Post/components/Explore/components/Explore";
 import Messages from "./features/Messages/components/Messages";
 import Chat from "./features/Messages/components/Chat";
+import Profile from "./features/User/components/Profile";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<App />}>
             <Route path="" element={<Main />}>
                 <Route path="" element={<Home />} />
-                <Route path="profile" element={<User />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="u/:username" element={<User />} />
                 <Route path="explore" element={<Explore />} />
                 <Route path="accounts/edit" element={<EditProfile />} />
 

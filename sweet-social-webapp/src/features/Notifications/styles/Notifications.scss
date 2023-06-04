@@ -1,4 +1,6 @@
 .notifications {
+    height: calc(100vh - 80px);
+    overflow-y: scroll ;
 
     .notification {
         display: flex;
@@ -6,6 +8,7 @@
         cursor: pointer;
         padding: 8px 24px;
         border-radius: 8px;
+
 
         &:hover {
             background-color: rgba($color: #222, $alpha: 0.05);

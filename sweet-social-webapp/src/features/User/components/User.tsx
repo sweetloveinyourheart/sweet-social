@@ -1,77 +1,88 @@
-import { Button, Col, Menu, MenuProps, Row, Typography } from "antd";
-import { FunctionComponent, useState } from "react";
-import { AppstoreOutlined, BookOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { Avatar, Button, Col, Menu, MenuProps, Row, Typography, message } from "antd";
+import { FunctionComponent, useEffect, useState } from "react";
+import { AppstoreOutlined, UserOutlined, MessageOutlined } from '@ant-design/icons';
 import "../styles/User.scss"
-import { useUser } from "../contexts/UserContext";
-import UserSettings from "./UserSettings";
-import { useNavigate } from "react-router-dom";
-import EditAvatar from "./EditAvatar";
+import { useNavigate, useParams } from "react-router-dom";
 import PersonalPosts from "../../Post/components/PersonalPosts/PersonalPosts";
+import { UserProfile, getUserProfile } from "../services/user";
+import PageLoading from "../../../components/Loading/PageLoading";
+import { connectToSingleChatbox } from "../../Messages/services/connect-chatbox";
 
 interface UserProps { }
 
 enum ProfileMenu {
     Post = 'post',
-    Saved = 'saved',
-    Tagged = 'tagged'
 }
 
 const items: MenuProps['items'] = [
     {
         label: 'Post',
         key: ProfileMenu.Post,
-        icon: <AppstoreOutlined />,
-    },
-    {
-        label: 'Saved',
-        key: ProfileMenu.Saved,
-        icon: <BookOutlined />
-    },
-    {
-        label: 'Tagged',
-        key: ProfileMenu.Tagged,
-        icon: <UsergroupAddOutlined />
-    },
+        icon: <AppstoreOutlined />
+    }
 ]
 
 const User: FunctionComponent<UserProps> = () => {
-    const [current, setCurrent] = useState<ProfileMenu>(ProfileMenu.Post);
+    const [user, setUser] = useState<UserProfile | null>(null)
+    const [loading, setLoading] = useState(true)
 
-    const { user } = useUser()
     const navigate = useNavigate()
+    const { username } = useParams()
 
-    const onClick: MenuProps['onClick'] = (e) => {
-        const menu = e.key as ProfileMenu
-        setCurrent(menu);
-    };
+    useEffect(() => {
+        if (!username) {
+            navigate('/')
+            return;
+        }
+        (async () => {
+            try {
+                const data = await getUserProfile(username)
+                setUser(data)
+            } catch (error) {
+                navigate('/')
+            } finally {
+                setLoading(false)
+            }
+        })()
+    }, [])
 
-    const handleEditProfile = () => {
-        navigate('/accounts/edit')
-    }
+    const onMakeConversation = async () => {
+        try {
+            if (!user) return;
 
-    const renderMenuTabs = () => {
-        switch (current) {
-            case ProfileMenu.Post:
-                return <PersonalPosts />
-        
-            default:
-                return <PersonalPosts />;
+            setLoading(true)
+
+            const { chatboxId } = await connectToSingleChatbox(user.id)
+            navigate(`/messages/${chatboxId}`)
+
+        } catch (error: any) {
+            message.error(error.response?.data?.message || `An error occurred: ${error.message}`)
+        } finally {
+            setLoading(false)
         }
     }
+
+    if (loading) return <PageLoading />
 
     return (
         <div className="profile">
             <Row>
                 <Col span={6}>
-                    <EditAvatar openMode="image"/>
+                    <Avatar size={125} src={user?.profile.avatar} icon={<UserOutlined />} />
                 </Col>
                 <Col span={18}>
                     <div className="profile-title">
                         <Typography.Title level={3}>
                             {user?.profile.username}
                         </Typography.Title>
-                        <Button onClick={handleEditProfile}>Edit profile</Button>
-                        <UserSettings />
+                        <Button 
+                            type="primary" 
+                            style={{ color: "#fff" }} 
+                            onClick={onMakeConversation}
+                            icon={<MessageOutlined />}
+                        >
+                            Chat
+                        </Button>
                     </div>
                     <div className="profile-count">
                         <div className="counter">
@@ -92,9 +103,9 @@ const User: FunctionComponent<UserProps> = () => {
                 </Col>
             </Row>
             <div className="profile-menu">
-                <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
+                <Menu selectedKeys={[ProfileMenu.Post]} mode="horizontal" items={items} />
             </div>
-            {renderMenuTabs()}
+            <PersonalPosts username={username} />
         </div>
     );
 }

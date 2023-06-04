@@ -1,14 +1,12 @@
 import { FunctionComponent, useEffect, useState } from "react";
-import { Post, getPersonalPosts, getPostsByUsername } from "../../services/personal-post";
+import { Post, getSavedPosts } from "../../services/personal-post";
 import { Col, Empty, Row } from "antd";
 import '../../styles/PersonalPosts.scss'
 import SinglePost from "./SinglePost";
 
-interface PersonalPostsProps {
-    username?: string
-}
+interface SavedPostsProps { }
 
-const PersonalPosts: FunctionComponent<PersonalPostsProps> = ({ username }) => {
+const SavedPosts: FunctionComponent<SavedPostsProps> = () => {
     const [posts, setPosts] = useState<Post[]>([])
     const [pagination, setPagination] = useState({
         page: 1,
@@ -18,11 +16,7 @@ const PersonalPosts: FunctionComponent<PersonalPostsProps> = ({ username }) => {
 
     useEffect(() => {
         (async () => {
-            if(username) {
-                var data = await getPostsByUsername(username)
-            } else {
-                var data = await getPersonalPosts(pagination.page, pagination.limit)
-            }
+            const data = await getSavedPosts(pagination.page, pagination.limit)
 
             setPosts(data.items)
             setPagination(s => ({
@@ -49,11 +43,11 @@ const PersonalPosts: FunctionComponent<PersonalPostsProps> = ({ username }) => {
                     </Row>
                 )
                 : (
-                    <Empty description="No posts uploaded yet. Check back later for updates!" />
+                    <Empty description="No posts saved yet. Check back later for updates!" />
                 )
             }
         </div>
     );
 }
 
-export default PersonalPosts;
+export default SavedPosts;

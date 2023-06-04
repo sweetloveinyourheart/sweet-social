@@ -1,0 +1,30 @@
+.post-settings {
+    .open-btn {
+        color: #222;
+        padding-right: 0;
+
+        &:hover {
+            color: #777;
+        }
+    }
+}
+
+.post-settings-modal {
+    width: 350px !important;
+
+    .setting-btn {
+        width: 100% !important;
+        color: #222;
+        border-bottom: 1px solid #dcdcdc;
+        border-radius: 0 !important;
+
+        &:hover {
+            border-color: #fff;
+            border-bottom-color: #dcdcdc;
+        }
+
+        &:last-child {
+            border: none;
+        }
+    }
+}

@@ -1,9 +1,10 @@
-import { Avatar, Button, Dropdown, Typography } from "antd";
+import { Avatar, Dropdown, Typography } from "antd";
 import { FunctionComponent } from "react";
 import { PostDetail } from "../../services/get-post";
 import "../../styles/PostHeader.scss"
 import { UserOutlined } from '@ant-design/icons';
 import QuickView from "./QuickView";
+import PostSetting from "./PostSetting";
 
 interface PostHeaderProps {
     post: PostDetail
@@ -11,13 +12,13 @@ interface PostHeaderProps {
 
 const PostHeader: FunctionComponent<PostHeaderProps> = ({ post }) => {
 
-
     return (
         <div className="post-header">
-            <Dropdown
-                dropdownRender={() => <QuickView username={post.user.profile.username} />}
-            >
-                <div className="author">
+
+            <div className="author">
+                <Dropdown
+                    dropdownRender={() => <QuickView username={post.user.profile.username} />}
+                >
                     <div className="author__left">
                         <div className="author-avatar">
                             <Avatar src={post.user.profile.avatar} icon={<UserOutlined />} />
@@ -35,13 +36,12 @@ const PostHeader: FunctionComponent<PostHeaderProps> = ({ post }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="author__right">
-                        <div className="settings">
-                            <Button type="link">•••</Button>
-                        </div>
-                    </div>
+                </Dropdown>
+
+                <div className="author__right">
+                    <PostSetting post={post} />
                 </div>
-            </Dropdown>
+            </div>
         </div>
     );
 }
