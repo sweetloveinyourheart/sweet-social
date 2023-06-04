@@ -59,7 +59,7 @@ const SiderBar: FunctionComponent<SiderBarProps> = () => {
             label: "Explore"
         },
         {
-            path: '/message',
+            path: '/messages',
             icon: <MessageOutlined />,
             label: "Messages"
         },

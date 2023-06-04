@@ -1,0 +1,33 @@
+.conversation {
+    padding: 12px 24px;
+    display: flex;
+    transition: 0.2s;
+    cursor: pointer;
+
+    &:hover {
+        background-color: rgba($color: #000000, $alpha: 0.05);
+    }
+
+    .avatar {
+        margin-right: 12px;
+    }
+
+    .info {
+        flex-grow: 1;
+
+        h5 {
+            margin: 0;
+        }
+
+        p {
+            margin: 0;
+            font-size: 13px;
+            color: #777;
+        }
+    }
+
+    &--active {
+        background-color: rgba($color: #000000, $alpha: 0.05);
+        
+    }
+}

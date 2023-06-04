@@ -10,6 +10,8 @@ import User from "./features/User/components/User";
 import EditProfile from "./features/User/components/EditProfile";
 import Home from "./pages/Home";
 import Explore from "./features/Post/components/Explore/components/Explore";
+import Messages from "./features/Messages/components/Messages";
+import Chat from "./features/Messages/components/Chat";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -17,8 +19,12 @@ const router = createBrowserRouter(
             <Route path="" element={<Main />}>
                 <Route path="" element={<Home />} />
                 <Route path="profile" element={<User />} />
-                <Route path="/explore" element={<Explore />}/>
-                <Route path="accounts/edit" element={<EditProfile />}/>
+                <Route path="explore" element={<Explore />} />
+                <Route path="accounts/edit" element={<EditProfile />} />
+
+                <Route path="messages" element={<Messages />}>
+                    <Route path=":chatboxId" element={<Chat />} />
+                </Route>
             </Route>
 
             <Route path="auth" element={<Auth />}>

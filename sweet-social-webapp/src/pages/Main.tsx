@@ -3,19 +3,22 @@ import { Outlet } from "react-router-dom";
 import SiderBar from "../components/SideBar/SideBar";
 import CreatePostWrapper from "../features/Creation/contexts/CreatePost";
 import PostViewerProvider from "../features/Post/contexts/PostViewer";
+import SocketProvider from "../features/Socket/SocketProvider";
 
 function MainPage() {
     return (
-        <CreatePostWrapper>
-            <PostViewerProvider>
-                <Layout style={{ background: "#fff", height: "100vh" }}>
-                    <SiderBar />
-                    <Layout style={{ background: "#fff", height: "100vh", overflowY: "scroll" }}>
-                        <Outlet />
+        <SocketProvider>
+            <CreatePostWrapper>
+                <PostViewerProvider>
+                    <Layout style={{ background: "#fff", height: "100vh" }}>
+                        <SiderBar />
+                        <Layout style={{ background: "#fff", height: "100vh", overflowY: "scroll" }}>
+                            <Outlet />
+                        </Layout>
                     </Layout>
-                </Layout>
-            </PostViewerProvider>
-        </CreatePostWrapper>
+                </PostViewerProvider>
+            </CreatePostWrapper>
+        </SocketProvider>
     );
 }
 

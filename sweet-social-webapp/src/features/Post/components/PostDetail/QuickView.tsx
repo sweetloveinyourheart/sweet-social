@@ -5,6 +5,8 @@ import { UserOutlined, MessageOutlined } from '@ant-design/icons'
 import "../../styles/QuickView.scss"
 import { followUser, unfollowUser } from "../../../User/services/interaction";
 import { useUser } from "../../../User/contexts/UserContext";
+import { connectToSingleChatbox } from "../../../Messages/services/connect-chatbox";
+import { useNavigate } from "react-router-dom";
 
 interface QuickViewProps {
     username: string
@@ -12,8 +14,10 @@ interface QuickViewProps {
 
 const QuickView: FunctionComponent<QuickViewProps> = ({ username }) => {
     const [user, setUser] = useState<BasicUserInfo | null>(null)
+    const [loading, setLoading] = useState<boolean>(false)
 
     const { user: myself } = useUser()
+    const navigate = useNavigate()
 
     useEffect(() => {
         (async () => {
@@ -26,6 +30,7 @@ const QuickView: FunctionComponent<QuickViewProps> = ({ username }) => {
         try {
             if (!user) return;
 
+            setLoading(true)
             await followUser(user.id)
 
             setUser(s => s ? ({ ...s, followed: true }) : null)
@@ -33,6 +38,8 @@ const QuickView: FunctionComponent<QuickViewProps> = ({ username }) => {
             message.success(`You are following ${user.profile.username}`)
         } catch (error: any) {
             message.error(error.response?.data?.message || `An error occurred: ${error.message}`)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -40,6 +47,7 @@ const QuickView: FunctionComponent<QuickViewProps> = ({ username }) => {
         try {
             if (!user) return;
 
+            setLoading(true)
             await unfollowUser(user.id)
 
             setUser(s => s ? ({ ...s, followed: false }) : null)
@@ -47,6 +55,24 @@ const QuickView: FunctionComponent<QuickViewProps> = ({ username }) => {
             message.success(`You was unfollow ${user.profile.username}`)
         } catch (error: any) {
             message.error(error.response?.data?.message || `An error occurred: ${error.message}`)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const onMakeConversation = async () => {
+        try {
+            if (!user) return;
+
+            setLoading(true)
+
+            const { chatboxId } = await connectToSingleChatbox(user.id)
+            navigate(`/messages/${chatboxId}`)
+
+        } catch (error: any) {
+            message.error(error.response?.data?.message || `An error occurred: ${error.message}`)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -96,12 +122,19 @@ const QuickView: FunctionComponent<QuickViewProps> = ({ username }) => {
                             <div className="actions">
                                 <Row gutter={12}>
                                     <Col span={12}>
-                                        <Button type="primary" icon={<MessageOutlined />}>Message</Button>
+                                        <Button
+                                            type="primary"
+                                            icon={<MessageOutlined />}
+                                            onClick={onMakeConversation}
+                                            loading={loading}
+                                        >
+                                            Message
+                                        </Button>
                                     </Col>
                                     <Col span={12}>
                                         {user.followed
-                                            ? <Button type="dashed" onClick={onUnfollow}>Unfollow</Button>
-                                            : <Button type="default" onClick={onFollow}>Follow</Button>
+                                            ? <Button type="dashed" onClick={onUnfollow} loading={loading}>Unfollow</Button>
+                                            : <Button type="default" onClick={onFollow} loading={loading}>Follow</Button>
                                         }
                                     </Col>
                                 </Row>

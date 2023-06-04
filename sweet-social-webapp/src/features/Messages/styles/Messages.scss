@@ -1,0 +1,49 @@
+.messages-window {
+    border: 1px solid #dcdcdc;
+    height: calc(100vh - 60px);
+    display: flex;
+
+    .users-list {
+        border-right: 1px solid #dcdcdc;
+        height: 100%;
+        width: 350px;
+        flex: 0 0 auto;
+
+        .myself {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #dcdcdc;
+
+            h4 {
+                margin: 0;
+            }
+
+            .myself-dummy {
+                width: 32px;
+            }
+        }
+    }
+
+    .messages-box {
+        // flex-grow: 1;
+        flex: 0 0 auto;
+        width: calc(893px - 350px);
+
+        .init-msg {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            .ant-result-icon {
+                margin-bottom: 16px;
+
+                span {
+                    color: #222 !important;
+                }
+            }
+        }
+    }
+}

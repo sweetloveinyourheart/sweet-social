@@ -29,7 +29,7 @@ const Notifications: FunctionComponent<NotificationsProps> = () => {
     return (
         <div className="notifications">
             {notifications.length === 0
-                ? <Empty description="There are no comments yet!"/>
+                ? <Empty description="There are no notifications yet!"/>
                 : null
             }
             {notifications.map((noti, key) => (

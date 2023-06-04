@@ -1,0 +1,40 @@
+.chat-message {
+    padding: 12px 24px;
+
+    .my-msg {
+        display: flex;
+        width: 70%;
+
+        .avatar {
+            margin-right: 12px;
+        }
+
+        .content {
+            padding: 12px;
+            border: 1px solid #dcdcdc;
+            border-radius: 12px;
+            color: #222;
+        }
+    }
+
+    &--right {
+        
+
+        .my-msg {
+            flex-direction: row-reverse;
+            margin-right: 0;
+            margin-left: auto;
+
+            .avatar {
+                margin-right: 0;
+                margin-left: 12px;
+            }
+
+            .content {
+                background-color: #e2187e;
+                color: #fff;
+                border-color: #e2187e;
+            }
+        }
+    }
+}
