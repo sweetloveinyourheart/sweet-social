@@ -26,7 +26,6 @@ const Messages: FunctionComponent<MessagesProps> = () => {
             try {
                 const convs = await getConversations()
                 setConversations(convs)
-                console.log(convs);
                 
             } catch (error) {
                 setConversations([])

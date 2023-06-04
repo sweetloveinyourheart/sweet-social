@@ -44,8 +44,21 @@
 
                 svg {
                     font-size: 20px;
+                    color: #222;
                 }
             }
         }
+    }
+
+    .loading {
+        text-align: center;
+        padding: 12px 0;
+        color: #777;
+    }
+
+    .days-diff {
+        color: #777;
+        font-size: 12px;
+        padding: 0 24px;
     }
 }

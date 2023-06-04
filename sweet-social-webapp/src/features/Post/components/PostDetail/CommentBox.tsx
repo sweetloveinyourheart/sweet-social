@@ -1,8 +1,9 @@
 import { Col, Input, Row } from "antd";
 import { FormEvent, FunctionComponent, useState } from "react";
-import { SmileOutlined, SendOutlined } from '@ant-design/icons'
+import { SendOutlined } from '@ant-design/icons'
 import { PostComment } from "../../services/post-comment";
 import { useUser } from "../../../User/contexts/UserContext";
+import Emoji from "../../../../components/Emoji/Emoji";
 
 interface CommentBoxProps {
     addComment: (comment: PostComment) => Promise<void>
@@ -35,9 +36,7 @@ const CommentBox: FunctionComponent<CommentBoxProps> = ({ addComment }) => {
         <div className="comment-box">
             <Row>
                 <Col span={2}>
-                    <button className="icon">
-                        <SmileOutlined />
-                    </button>
+                    <Emoji onEmojiClick={emj => { setContent(s => s + emj) }} />
                 </Col>
                 <Col span={20}>
                     <form onSubmit={onSubmit}>

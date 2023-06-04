@@ -2,34 +2,61 @@ import { FormEvent, FunctionComponent, createRef, useEffect, useState } from "re
 import { useChat } from "./Messages";
 import { useSocket } from "../../Socket/SocketProvider";
 import "../styles/Chat.scss"
-import { Avatar, Col, Input, Row, Typography, message } from "antd";
-import { ChatboxMessage, Conversation, getChatboxData } from "../services/conversations";
-import { UserOutlined, SmileOutlined, SendOutlined } from '@ant-design/icons'
+import { Avatar, Col, Divider, Input, Row, Typography, message } from "antd";
+import { ChatboxMessage, ChatboxInfo, getChatboxInfo, getChatboxMessages } from "../services/conversations";
+import { UserOutlined, SendOutlined } from '@ant-design/icons'
 import { useUser } from "../../User/contexts/UserContext";
 import ChatMessage from "./ChatMessage";
+import moment from "moment";
+import Emoji from "../../../components/Emoji/Emoji";
 
 interface ChatProps { }
 
 const Chat: FunctionComponent<ChatProps> = () => {
-    const [conversation, setConversation] = useState<Conversation | null>(null)
+    const [info, setInfo] = useState<ChatboxInfo | null>(null)
     const [messages, setMessages] = useState<ChatboxMessage[]>([])
     const [content, setContent] = useState<string>("")
+
+    const [pagination, setPagination] = useState({
+        page: 1,
+        limit: 25,
+        totalPages: 1
+    })
+    const [loadingPrevious, setLoadingPrevious] = useState<boolean>(false)
 
     const { chatboxId } = useChat()
     const { socket } = useSocket()
     const { user } = useUser()
 
+    const chatboxRef = createRef<HTMLDivElement>()
     const messagesEndRef = createRef<HTMLDivElement>()
+
+    const fetchMessages = async () => {
+        const msgData = await getChatboxMessages(chatboxId, pagination.page, pagination.limit)
+
+        const reverseMsgData = msgData.items.reverse()
+        setMessages(s => [...reverseMsgData, ...s])
+
+        setPagination(s => ({
+            ...s,
+            page: ++s.page,
+            totalPages: msgData.meta.totalPages
+        }))
+    }
 
     useEffect(() => {
         (async () => {
             try {
-                const data = await getChatboxData(chatboxId)
-                setConversation(data)
-                setMessages(data.messages)
+                setLoadingPrevious(true)
+                const data = await getChatboxInfo(chatboxId)
+                setInfo(data)
+
+                await fetchMessages()
 
             } catch (error) {
                 message.error("An error has occurred !")
+            } finally {
+                setLoadingPrevious(false)
             }
         })()
 
@@ -41,7 +68,7 @@ const Chat: FunctionComponent<ChatProps> = () => {
 
         socket.on('message-received', (payload: any) => {
             const message: ChatboxMessage = payload.message
-            
+
             setMessages(s => [...s, message])
         })
 
@@ -58,13 +85,23 @@ const Chat: FunctionComponent<ChatProps> = () => {
     useEffect(() => {
         // Scroll to bottom
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+
+        // Check if scrolled to the top of the chat box
+        chatboxRef.current?.addEventListener('scroll', () => {
+            const chatBoxElement = chatboxRef.current;
+
+            if (chatBoxElement?.scrollTop === 0) {
+                if (pagination.page <= pagination.totalPages) {
+                    fetchMessages()
+                }
+            }
+        })
     }, [messages])
 
-
     const getSenderProfile = () => {
-        if (!conversation || !user) return null
+        if (!info || !user) return null
 
-        const sender = conversation.members.find((member) => member.profile.username !== user.profile.username)
+        const sender = info.members.find((member) => member.profile.username !== user.profile.username)
 
         return sender?.profile || null
     }
@@ -86,6 +123,45 @@ const Chat: FunctionComponent<ChatProps> = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
 
+    const renderMessages = () => {
+        let currDate = new Date();
+        let lastDate = new Date();
+
+        let currDiff = 0
+
+        return messages.map((msg, index) => {
+            lastDate = new Date(msg.createdAt)
+
+            // Calculate the time difference in milliseconds
+            let timeDiff = currDate.getTime() - lastDate.getTime();
+
+            // Calculate the number of days
+            let daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
+            
+            const canShowDiff = () => {
+                if(daysDiff !== currDiff) {
+                    currDiff = daysDiff
+                    return true
+                }
+
+                return false
+            }
+
+            return (
+                <div key={`chat-msg_${index}`}>  
+                    {canShowDiff()
+                        ? <Divider className="days-diff">{moment(lastDate).fromNow()}</Divider>
+                        : null
+                    }
+                    <ChatMessage
+                        message={msg}
+                        isMyMsg={msg.user.profile.username === user?.profile.username}
+                    />
+                </div>
+            )
+        })
+    }
+
     return (
         <div className="chatbox">
             <div className="chatbox-header">
@@ -96,23 +172,22 @@ const Chat: FunctionComponent<ChatProps> = () => {
                     </Typography.Title>
                 </div>
             </div>
-            <div className="chat">
-                {messages.map((msg, index) => (
-                    <ChatMessage
-                        message={msg}
-                        key={`chat-msg_${index}`}
-                        isMyMsg={msg.user.profile.username === user?.profile.username}
-                    />
-                ))}
+            <div className="chat" ref={chatboxRef}>
+                {loadingPrevious
+                    ? (
+                        <div className="loading">
+                            Loading more message
+                        </div>
+                    ) : null
+                }
+                {renderMessages()}
                 <div ref={messagesEndRef} />
             </div>
             <div className="chat-box">
                 <form className="chat-form" onSubmit={onSendMessage}>
                     <Row>
                         <Col span={3}>
-                            <button className="icon" type="button">
-                                <SmileOutlined />
-                            </button>
+                            <Emoji onEmojiClick={(emoji) => setContent(s => s+emoji)} />
                         </Col>
                         <Col span={18}>
                             <Input
