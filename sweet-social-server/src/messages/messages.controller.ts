@@ -1,9 +1,10 @@
-import { Body, Controller, DefaultValuePipe, Get, Param, ParseIntPipe, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { SingleChatboxDto, SingleConnectDto } from './dto/connect-chatbox.dto';
 import { ChatboxDto, ChatboxInfoDto, PaginationMessageDto } from './dto/chatbox.dto';
 import { AuthGuard } from 'src/auth/guards/jwt.guard';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { MessageDto } from 'src/common/dto/message.dto';
 
 @ApiTags('Messages')
 @Controller('messages')
@@ -61,5 +62,20 @@ export class MessagesController {
         const userId = req['user'].id
 
         return this.messagesService.getChatboxMessages(userId, chatboxId, { page, limit });
+    }
+
+    @UseGuards(AuthGuard)
+    @ApiBearerAuth()
+    @ApiResponse({ type: MessageDto })
+    @ApiOperation({ summary: 'Delete a conversation' })
+    @Delete('remove/:chatboxId')
+    async deleteConversation(
+        @Request() req, 
+        @Param('chatboxId') chatboxId: string
+
+    ): Promise<MessageDto> {
+        const userId = req['user'].id
+
+        return this.messagesService.deleteConversation(userId, chatboxId)
     }
 }

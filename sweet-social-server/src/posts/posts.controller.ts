@@ -56,11 +56,25 @@ export class PostsController {
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
+  @ApiOperation({ summary: "Get saved posts by user" })
+  @ApiResponse({ type: PaginationPostDto, status: 200 })
+  @Get('/saved/get-all')
+  async getSavedPosts(
+    @Request() req,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ): Promise<PaginationPostDto> {
+    const userId = req['user'].id
+    return await this.postsService.getSavedPosts(userId, { page, limit })
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: "Get user posts by username" })
   @ApiResponse({ type: PaginationPostDto, status: 200 })
-  @Get('/user/get-all')
+  @Get('/user/:username')
   async getUserPosts(
-    @Query('username') username: string,
+    @Param('username') username: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
   ): Promise<PaginationPostDto> {
@@ -109,6 +123,16 @@ export class PostsController {
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
+  @ApiOperation({ summary: "Save a post" })
+  @ApiResponse({ type: MessageDto, status: 200 })
+  @Post('/save/:postId')
+  async savePost(@Request() req, @Param('postId') postId: number) {
+    const userId = req['user'].id
+    return await this.postsService.savePost(userId, postId)
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: "Comment on a post" })
   @ApiResponse({ type: MessageDto, status: 200 })
   @Post('/comment/:postId')
@@ -125,6 +149,16 @@ export class PostsController {
   async dislikePost(@Request() req, @Param('postId') postId: number) {
     const userId = req['user'].id
     return await this.postsService.dislikePost(userId, postId)
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Unbookmark a post" })
+  @ApiResponse({ type: MessageDto, status: 200 })
+  @Delete('/unbookmark/:postId')
+  async unbookmarkPost(@Request() req, @Param('postId') postId: number) {
+    const userId = req['user'].id
+    return await this.postsService.unbookmarkPost(userId, postId)
   }
 
   @UseGuards(AuthGuard)

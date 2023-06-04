@@ -21,6 +21,11 @@ export class ReactionsService {
     ) { }
 
     async likePost(userId: number, post: Post): Promise<MessageDto> {
+        const wasLiked = await this.likesRepository.findOneBy({ post: { id: post.id }, user: { id: userId } })
+        if (wasLiked) {
+            throw new NotFoundException('You have liked this post before !')
+        }
+        
         const liked = this.likesRepository.create({
             post,
             user: { id: userId }
@@ -33,6 +38,22 @@ export class ReactionsService {
         await this.notificationsService.newPostNotification(notificationContent, userId, post, 'like')
 
         return { message: 'Post liked!' }
+    }
+
+    async savePost(userId: number, post: Post): Promise<MessageDto> {
+        const wasSaved = await this.savedRepository.findOneBy({ post: { id: post.id }, user: { id: userId } })
+        if (wasSaved) {
+            throw new NotFoundException('You have saved this post before !')
+        }
+
+        const saved = this.savedRepository.create({
+            post,
+            user: { id: userId }
+        })
+
+        await this.savedRepository.save(saved)
+
+        return { message: 'Post saved!' }
     }
 
     async commentOnPost(userId: number, post: Post, content: string): Promise<MessageDto> {
@@ -59,6 +80,16 @@ export class ReactionsService {
 
         await this.likesRepository.remove(liked)
         return { message: 'Post disliked!' }
+    }
+
+    async unbookmark(userId: number, post: Post): Promise<MessageDto> {
+        const wasSaved = await this.savedRepository.findOneBy({ post: { id: post.id }, user: { id: userId } })
+        if (!wasSaved) {
+            throw new NotFoundException('Post not found !')
+        }
+
+        await this.savedRepository.remove(wasSaved)
+        return { message: 'Unbookmarked post!' }
     }
 
     async getPostReactionsByUser(userId: number, postId: number): Promise<PostReactionDto> {

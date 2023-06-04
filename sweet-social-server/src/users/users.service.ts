@@ -13,6 +13,7 @@ import { BasicUserDto } from './dto/basic-info.dto';
 import { Following } from './entities/following.entity';
 import { Follower } from './entities/follower.entity';
 import { PostsService } from 'src/posts/posts.service';
+import { ShortUserInfo } from './dto/basic-info.dto';
 
 @Injectable()
 export class UsersService {
@@ -66,6 +67,7 @@ export class UsersService {
     const followed = await this.followersRepository.exist({ where: { followerUser: { id }, user: { id: user.id } } })
 
     const userDetail: UserDetailDto = {
+      id: user.id,
       email: user.email,
       isVerified: user.isVerified,
       profile: {
@@ -97,6 +99,7 @@ export class UsersService {
     const post = await this.postsService.countPostByUsername(user.profile.username)
 
     const userDetail: UserDetailDto = {
+      id: user.id,
       email: user.email,
       isVerified: user.isVerified,
       profile: {
@@ -251,5 +254,16 @@ export class UsersService {
     await this.followersRepository.remove(followerUser)
 
     return { message: "UnFollow user successfully !" }
+  }
+
+  async searchUser(pattern: string): Promise<ShortUserInfo[]> {
+    const querybuilder = this.usersRepository.createQueryBuilder('user')
+    const result = await querybuilder
+      .innerJoin('user.profile', 'profile')
+      .where('profile.name ~ :pattern or profile.username ~:pattern', { pattern })
+      .select(['user.id', 'profile'])
+      .getMany()
+
+    return result
   }
 }

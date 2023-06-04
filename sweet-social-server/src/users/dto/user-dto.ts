@@ -20,6 +20,9 @@ export class ProfileDto {
 
 export class UserDto {
     @ApiProperty()
+    id: number
+
+    @ApiProperty()
     email: string
 
     @ApiProperty()

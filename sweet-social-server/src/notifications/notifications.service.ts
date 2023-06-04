@@ -57,6 +57,9 @@ export class NotificationsService {
             avatar: true
           }
         }
+      },
+      order: {
+        createdAt: 'DESC'
       }
     })
     return notifications

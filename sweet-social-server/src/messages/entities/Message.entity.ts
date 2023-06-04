@@ -13,7 +13,7 @@ export class Message {
     @CreateDateColumn()
     createdAt: Date
 
-    @ManyToOne(() =>  ChatBox, chatbox => chatbox.messages)
+    @ManyToOne(() =>  ChatBox, chatbox => chatbox.messages, { onDelete: 'CASCADE' })
     chatbox: ChatBox
 
     @ManyToOne(() => User, user => user.messages)

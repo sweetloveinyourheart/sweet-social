@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ChatBox } from './entities/Chatbox.entity';
 import { In, Repository } from 'typeorm';
@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ChatboxDto, ChatboxInfoDto, PaginationMessageDto } from './dto/chatbox.dto';
 import { MessagePayload } from './payload/chatbox.payload';
 import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
+import { MessageDto } from 'src/common/dto/message.dto';
 
 @Injectable()
 export class MessagesService {
@@ -178,5 +179,24 @@ export class MessagesService {
             .getOne()
 
         return msg.chatbox.members
+    }
+
+    async deleteConversation(userId: number, chatboxId: string): Promise<MessageDto> {
+        const conversation = await this.chatboxesRepository.findOne({ 
+            relations: ['members'],
+            where: {
+                chatboxId,
+                members: {
+                    id: userId
+                }
+            }
+         })
+        if(!conversation) {
+            throw new NotFoundException('Conversation not found !')
+        }
+
+        await this.chatboxesRepository.remove(conversation)
+
+        return { message: "Conversation deleted !" }
     }
 }

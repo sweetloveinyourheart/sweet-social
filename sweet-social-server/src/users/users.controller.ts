@@ -1,6 +1,6 @@
-import { 
-  Controller, Body, Get, Request, UseGuards, Put, 
-  UseInterceptors, UploadedFile, BadRequestException, Param, Delete, Post 
+import {
+  Controller, Body, Get, Request, UseGuards, Put,
+  UseInterceptors, UploadedFile, BadRequestException, Param, Delete, Post, Query
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -10,7 +10,7 @@ import { MessageDto } from 'src/common/dto/message.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateAvatarDto } from './dto/update-avatar';
-import { BasicUserDto } from './dto/basic-info.dto';
+import { BasicUserDto, ShortUserInfo } from './dto/basic-info.dto';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRoles } from './entities/user.entity';
@@ -64,6 +64,15 @@ export class UsersController {
   async getProfile(@Request() req: Request): Promise<UserDetailDto> {
     const id = req['user'].id
     return await this.usersService.getProfile(id)
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Search user' })
+  @ApiResponse({ type: [ShortUserInfo], status: 200 })
+  @Get('/search')
+  async searchUser(@Query('pattern') pattern: string): Promise<ShortUserInfo[]> {
+    return await this.usersService.searchUser(pattern)
   }
 
   @UseGuards(AuthGuard)

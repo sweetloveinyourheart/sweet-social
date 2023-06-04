@@ -82,6 +82,18 @@ export class PostsService {
         return await paginate(queryBuilder, options)
     }
 
+    async getSavedPosts(userId: number, options: IPaginationOptions): Promise<PaginationPostDto> {
+        const queryBuilder = this.postsRepository.createQueryBuilder('post')
+        queryBuilder
+            .innerJoinAndSelect('post.medias', 'media')
+            .leftJoin('post.saved', 'saved')
+            .innerJoin('saved.user', 'user')
+            .where('user.id = :userId', { userId })
+            .orderBy('post.createdAt', 'DESC')
+
+        return await paginate(queryBuilder, options)
+    }
+
     async getPostById(postId: number): Promise<PostDetailDto> {
         const post = await this.postsRepository.findOne({
             select: {
@@ -112,7 +124,9 @@ export class PostsService {
         const queryBuilder = this.postsRepository.createQueryBuilder('post')
         queryBuilder
             .innerJoinAndSelect('post.medias', 'media')
-            .where('post.user.id = :userId', { username })
+            .innerJoin('post.user', 'user')
+            .innerJoin('user.profile', 'profile')
+            .where('profile.username = :username', { username })
 
         return await paginate(queryBuilder, options)
     }
@@ -213,6 +227,26 @@ export class PostsService {
         await this.postsRepository.update({ id: post.id }, { likesCount: --post.likesCount })
 
         return { message: "Post disliked !" }
+    }
+
+    async savePost(userId: number, postId: number): Promise<MessageDto> {
+        const post = await this.postsRepository.findOne({ where: { id: postId }, relations: ['user', 'user.profile'] })
+        if (!post) {
+            throw new NotFoundException('Post not found!')
+        }
+
+        
+
+        return await this.reactionsService.savePost(userId, post)
+    }
+
+    async unbookmarkPost(userId: number, postId: number): Promise<MessageDto> {
+        const post = await this.postsRepository.findOne({ where: { id: postId }, relations: ['user'] })
+        if (!post) {
+            throw new NotFoundException('Post not found!')
+        }
+
+        return await this.reactionsService.unbookmark(userId, post)
     }
 
     async commentOnPost(userId: number, postId: number, cmt: NewCommentDto): Promise<MessageDto> {        
