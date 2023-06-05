@@ -13,7 +13,7 @@ const SuggestedAccount: FunctionComponent<SuggestedAccountProps> = () => {
     useEffect(() => {
         (async () => {
             const data = await getSuggestedAccounts()
-            setAccounts(data)            
+            setAccounts(data)
         })()
     }, [])
 
@@ -38,7 +38,7 @@ const SuggestedAccount: FunctionComponent<SuggestedAccountProps> = () => {
             let current = [...accounts]
             current[index].followed = false
             setAccounts(current)
-            
+
             message.success(`You was unfollow ${user.profile.username}`)
         } catch (error: any) {
             message.error(error.response?.data?.message || `An error occurred: ${error.message}`)
@@ -46,48 +46,53 @@ const SuggestedAccount: FunctionComponent<SuggestedAccountProps> = () => {
     }
 
     return (
-        <div className="suggested-accounts">
-            <h5 className="suggested-accounts__header">
-                Suggested for you
-            </h5>
-            {accounts.map((item, index) => (
-                <div className="account" key={`suggested-account_${index}`}>
-                    <Row>
-                        <Col span={4}>
-                            <Avatar size={"large"} src={item.profile.avatar} />
-                        </Col>
-                        <Col span={16}>
-                            <div className="account-info">
-                                <Typography.Title level={5}>
-                                    {item.profile.username}
-                                </Typography.Title>
-                                <p>
-                                    {item.profile.name}
-                                </p>
-                            </div>
-                        </Col>
-                        <Col span={4}>
-                            {item.followed
-                                ? (
-                                    <div className="account-follow">
-                                        <Button type="link" onClick={() => onUnfollow(item, index)}>
-                                            Following
-                                        </Button>
-                                    </div>
-                                )
-                                : (
-                                    <div className="account-follow" onClick={() => onFollow(item, index)}>
-                                        <Button type="link">
-                                            Follow
-                                        </Button>
-                                    </div>
-                                )
-                            }
-                        </Col>
-                    </Row>
-                </div>
-            ))}
-        </div>
+        <>
+            <div className="suggested-accounts">
+                <h5 className="suggested-accounts__header">
+                    Suggested for you
+                </h5>
+                {accounts.map((item, index) => (
+                    <div className="account" key={`suggested-account_${index}`}>
+                        <Row>
+                            <Col span={4}>
+                                <Avatar size={"large"} src={item.profile.avatar} />
+                            </Col>
+                            <Col span={16}>
+                                <div className="account-info">
+                                    <Typography.Title level={5}>
+                                        {item.profile.username}
+                                    </Typography.Title>
+                                    <p>
+                                        {item.profile.name}
+                                    </p>
+                                </div>
+                            </Col>
+                            <Col span={4}>
+                                {item.followed
+                                    ? (
+                                        <div className="account-follow">
+                                            <Button type="link" onClick={() => onUnfollow(item, index)}>
+                                                Following
+                                            </Button>
+                                        </div>
+                                    )
+                                    : (
+                                        <div className="account-follow" onClick={() => onFollow(item, index)}>
+                                            <Button type="link">
+                                                Follow
+                                            </Button>
+                                        </div>
+                                    )
+                                }
+                            </Col>
+                        </Row>
+                    </div>
+                ))}
+                <Typography.Text style={{ color: "#777", fontSize: 13 }}>
+                    © 2023 SWEETBOOK FROM TYNX
+                </Typography.Text>
+            </div>
+        </>
     );
 }
 

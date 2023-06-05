@@ -19,7 +19,7 @@
                 font-size: 14px;
                 line-height: 18px;
             }
-    
+
             p {
                 font-size: 12px;
                 white-space: nowrap;
@@ -36,14 +36,17 @@
 
             button {
                 padding: 0;
-    
+
                 span {
                     font-size: 13px;
                     font-weight: 600;
                 }
             }
         }
+    }
 
-
+    @media screen and (max-width: 991px) {
+        max-width: 470px;
+        margin: 0 auto;
     }
 }

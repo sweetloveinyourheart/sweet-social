@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { Button, Layout, Menu, MenuProps, Typography } from 'antd'
 import {
     HomeOutlined,
@@ -29,17 +29,39 @@ enum SidebarBoxMode {
 
 const SiderBar: FunctionComponent<SiderBarProps> = () => {
     const [sidebarBoxMode, setSidebarBoxMode] = useState<SidebarBoxMode>(SidebarBoxMode.Close)
+    const [expand, setExpand] = useState<boolean>(true)
+    const [lockSidebar, setLockSidebar] = useState(false)
 
     const { pathname } = useLocation()
     const navigate = useNavigate()
     const { openCreationBox } = useCreation()
 
+    useEffect(() => {
+        window.addEventListener('resize', () => {
+            const windowW = window.innerWidth
+            if (windowW <= 1200) {
+                setExpand(false)
+                setLockSidebar(true)
+            } else {
+                setExpand(true)
+                setLockSidebar(false)
+            }
+        });
+    }, [])
+
     const onOpenNotification = () => {
         setSidebarBoxMode(SidebarBoxMode.Notification)
+        !lockSidebar && setExpand(false)
     }
 
     const onOpenSearch = () => {
         setSidebarBoxMode(SidebarBoxMode.Search)
+        !lockSidebar && setExpand(false)
+    }
+
+    const onClose = () => {
+        setSidebarBoxMode(SidebarBoxMode.Close)
+        !lockSidebar && setExpand(true)
     }
 
     const siderItems = [
@@ -95,6 +117,7 @@ const SiderBar: FunctionComponent<SiderBarProps> = () => {
                     }
                     else {
                         setSidebarBoxMode(SidebarBoxMode.Close)
+                        !lockSidebar && setExpand(true)
                         navigate(item.path)
                     }
                 }
@@ -106,7 +129,7 @@ const SiderBar: FunctionComponent<SiderBarProps> = () => {
         switch (sidebarBoxMode) {
             case SidebarBoxMode.Notification:
                 return <Notifications />
-            
+
             case SidebarBoxMode.Search:
                 return <SearchUsers />
 
@@ -122,9 +145,9 @@ const SiderBar: FunctionComponent<SiderBarProps> = () => {
                 className="sidebar"
                 trigger={null}
                 collapsible
-                collapsed={sidebarBoxMode !== SidebarBoxMode.Close}
+                collapsed={!expand}
             >
-                <Logo small={sidebarBoxMode !== SidebarBoxMode.Close} style={{ fontSize: 36, padding: '24px' }} />
+                <Logo small={!expand} style={{ fontSize: 36, padding: '24px' }} />
                 <Menu
                     mode="inline"
                     selectedKeys={[pathname]}
@@ -138,7 +161,7 @@ const SiderBar: FunctionComponent<SiderBarProps> = () => {
                             {sidebarBoxMode === SidebarBoxMode.Notification && "Notifications"}
                             {sidebarBoxMode === SidebarBoxMode.Search && "Search"}
                         </Typography.Title>
-                        <Button icon={<CloseOutlined />} type="link" onClick={() => setSidebarBoxMode(SidebarBoxMode.Close)}/>
+                        <Button icon={<CloseOutlined />} type="link" onClick={onClose} />
                     </div>
                     {renderSidebarBoxContent()}
                 </div>

@@ -13,16 +13,26 @@
     }
 
     .info {
-        flex-grow: 1;
+        overflow: hidden;
 
         h5 {
             margin: 0;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
         }
 
         p {
             margin: 0;
             font-size: 13px;
             color: #777;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
         }
     }
 

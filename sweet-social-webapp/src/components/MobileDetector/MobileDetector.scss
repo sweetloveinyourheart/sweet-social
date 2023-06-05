@@ -1,0 +1,19 @@
+.mobile-detector {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+
+    .mobile-notification {
+        padding: 24px;
+        border: 1px solid #dcdcdc;
+        border-radius: 12px;
+        max-width: calc(300px);
+        text-align: center;
+
+        h4 {
+            margin-bottom: 12px;
+        }
+    }
+}

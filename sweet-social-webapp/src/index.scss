@@ -63,8 +63,10 @@ button {
 .main-area {
   width: 100%;
   min-height: 100vh;
+  padding: 20px 10px 0;
 
-  @media screen and (min-width: 736px) {
+
+  @media screen and (min-width: 991px) {
     width: 935px;
     margin: 0 auto;
     padding: 30px 20px 0;

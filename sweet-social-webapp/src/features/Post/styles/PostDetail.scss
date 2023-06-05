@@ -1,6 +1,4 @@
 .post-detail {
-
-
     .ant-modal-content {
         padding: 0;
     }
@@ -17,12 +15,18 @@
     .detail {
         display: flex;
         flex-direction: column;
-        height: 787.5px;
+        max-height: 787.5px;
+        height: 100%;
 
         &__comments {
             padding: 16px;
             flex-grow: 1;
             overflow-y: auto;
+            position: relative;
+
+            .abc {
+                position: absolute;
+            }
 
             .comment {
                 margin-bottom: 12px;
@@ -35,7 +39,7 @@
                 .comment-content {
                     width: 100%;
                 }
-                
+
                 .content {
                     margin: 0;
 

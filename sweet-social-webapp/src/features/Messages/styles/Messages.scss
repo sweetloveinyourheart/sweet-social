@@ -3,11 +3,23 @@
     height: calc(100vh - 60px);
     display: flex;
 
+    @media screen and (max-width: 991px) {
+        height: 100%;
+    }
+
     .users-list {
         border-right: 1px solid #dcdcdc;
         height: 100%;
         width: 350px;
         flex: 0 0 auto;
+
+        @media screen and (max-width: 991px) {
+            width: 250px;
+        }
+
+        @media screen and (max-width: 700px) {
+            width: 100px;
+        }
 
         .myself {
             display: flex;
@@ -18,6 +30,9 @@
 
             h4 {
                 margin: 0;
+                @media screen and (max-width: 700px) {
+                    display: none;
+                }
             }
 
             .myself-dummy {
@@ -30,6 +45,14 @@
         // flex-grow: 1;
         flex: 0 0 auto;
         width: calc(893px - 350px);
+
+        @media screen and (max-width: 991px) {
+            width: calc(100vw - 340px);
+        }
+
+        @media screen and (max-width: 700px) {
+            width: calc(100vw - 190px);
+        }
 
         .init-msg {
             height: 100%;

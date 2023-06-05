@@ -28,7 +28,7 @@ const SavedPosts: FunctionComponent<SavedPostsProps> = () => {
 
     const renderPosts = () => {
         return posts.map((post, index) => (
-            <Col span={8} key={`personal-post_${index}`}>
+            <Col xs={24} sm={12} lg={8} key={`personal-post_${index}`}>
                 <SinglePost post={post} />
             </Col>
         ))

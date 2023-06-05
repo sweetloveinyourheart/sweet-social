@@ -6,14 +6,11 @@ function Home() {
     return (
         <div className="main-area">
             <Row gutter={16}>
-                <Col span={16}>
+                <Col sm={24} lg={16}>
                     <Newsfeed />
                 </Col>
-                <Col span={8}>
+                <Col sm={24} lg={8}>
                     <SuggestedAccount />
-                    <Typography.Text style={{ color: "#777", fontSize: 13 }}>
-                        © 2023 SWEETBOOK FROM TYNX
-                    </Typography.Text>
                 </Col>
             </Row>
         </div>
