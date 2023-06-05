@@ -12,10 +12,10 @@ export class GcpBucketService {
         private configSerivce: ConfigService
     ) {
         this.storage = new Storage({
-            projectId: configSerivce.get('GCS_PROJECT_ID'),
+            projectId: configSerivce.get('GCP_PROJECT_ID'),
             keyFilename: __dirname + '/configs' + '/gcp-service-account.json',
         });
-        this.bucketName = this.configSerivce.get('GCS_BUCKET_NAME');
+        this.bucketName = this.configSerivce.get('GCP_BUCKET_NAME');
     }
 
     async uploadFile(file: Express.Multer.File): Promise<File> {

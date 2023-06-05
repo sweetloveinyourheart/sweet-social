@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  webapp:
+    container_name: webapp
+    hostname: webapp
+    build: 
+      context: sweet-social-webapp
+      dockerfile: Dockerfile
+    environment:
+      - VITE_BASE_URL=http://localhost:9000
+    ports:
+      - '5173:5173'
+    networks:
+      - shared-network
+
+  server:
+    container_name: server
+    hostname: server
+    build:
+      context: sweet-social-server
+      dockerfile: Dockerfile
+      
+    environment:
+      - POSTGRESQL_HOST=db
+      - POSTGRESQL_PORT=5432
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=123456
+      - POSTGRESQL_DB=sweet-social
+
+      - JWT_SECRET=jwtsecret
+      - CLIENT_URL=http://localhost:5173
+
+      - EMAIL_HOST=<YOUR_SENDGRID_EMAIL_HOST>
+      - EMAIL_USER=<YOUR_SENDGRID_EMAIL_KEY>
+      - EMAIL_PASSWORD=<YOUR_SENDGRID_EMAIL_PASS>
+
+      - GCP_PROJECT_ID=<YOUR_GCP_PROJECT_ID>
+      - GCP_BUCKET_NAME=<YOUR_GCP_BUCKET_NAME>
+    ports:
+      - '9000:9000'
+    networks:
+      - shared-network
+
+  db:
+    image: postgres:latest
+    container_name: db
+    hostname: db
+    environment:
+      POSTGRES_PORT: 5432
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: sweet-social
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+    ports:
+      - '5431:5432'
+    networks:
+      - shared-network
+
+volumes:
+  db-data:
+
+networks:
+  shared-network:
+    driver: bridge
+
+  
