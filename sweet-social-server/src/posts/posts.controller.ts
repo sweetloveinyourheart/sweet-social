@@ -1,8 +1,8 @@
 import { BadRequestException, Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Post, Query, Request, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { PostsService } from './posts.service';
-import { NewPostDto } from './dto/new-post.dto';
+import { NewPostDto, PostSettingDto } from './dto/new-post.dto';
 import { AuthGuard } from 'src/auth/guards/jwt.guard';
-import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { MessageDto } from 'src/common/dto/message.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { PaginationPostDto } from './dto/post.dto';
@@ -119,6 +119,20 @@ export class PostsController {
   async likePost(@Request() req, @Param('postId') postId: number) {
     const userId = req['user'].id
     return await this.postsService.likePost(userId, postId)
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Change post settings" })
+  @ApiResponse({ type: MessageDto, status: 200 })
+  @Post('/change-settings/:postId')
+  async changePostSettings(
+    @Request() req,
+    @Param('postId') postId: number,
+    @Body() settings: PostSettingDto
+  ) {
+    const userId = req['user'].id
+    return await this.postsService.changePostSettings(userId, postId, settings)
   }
 
   @UseGuards(AuthGuard)

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Post } from './entities/post.entity';
 import { Media, MediaType } from './entities/media.entity';
-import { NewPostDto } from './dto/new-post.dto';
+import { NewPostDto, PostSettingDto } from './dto/new-post.dto';
 import { GcpBucketService } from 'src/gcp-bucket/gcp-bucket.service';
 import { MessageDto } from 'src/common/dto/message.dto';
 import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
@@ -18,7 +18,7 @@ export class PostsService {
     constructor(
         @InjectRepository(Post) private readonly postsRepository: Repository<Post>,
         @InjectRepository(Media) private readonly mediasRepository: Repository<Media>,
-        @InjectRepository(Media) private readonly postSettingsRepository: Repository<PostSettings>,
+        @InjectRepository(PostSettings) private readonly postSettingsRepository: Repository<PostSettings>,
         private readonly gcpBucketService: GcpBucketService,
         private readonly reactionsService: ReactionsService
     ) { }
@@ -110,10 +110,15 @@ export class PostsService {
                         name: true,
                         avatar: true
                     }
+                },
+                settings: {
+                    canComment: true,
+                    isPublic: true,
+                    showLikeAndViewCounts: true
                 }
             },
             where: { id: postId },
-            relations: ['user', 'user.profile', 'medias']
+            relations: ['settings', 'user', 'user.profile', 'medias',]
         })
         if (!post) throw new NotFoundException('Cannot found this post')
 
@@ -157,11 +162,13 @@ export class PostsService {
         queryBuilder
             .innerJoin('post.medias', 'media')
             .innerJoin('post.user', 'user')
+            .innerJoin('post.settings', 'settings')
             .innerJoin('user.profile', 'profile')
             .innerJoin('user.followers', 'followers') // join with follower table to find following user's posts
             .innerJoin('followers.followerUser', 'fuser')
             .select(['post', 'media', 'user.id', 'profile.avatar', 'profile.name', 'profile.username'])
             .where('fuser.id = :userId', { userId }) // match where user id exist on the followers list of post owner
+            .andWhere('settings.isPublic = true')
             .orderBy('post.createdAt', 'DESC')
 
         const result = await paginate(queryBuilder, options)
@@ -171,10 +178,12 @@ export class PostsService {
             // looking for awesome post coming from premium user
             queryBuilderForPremium
                 .innerJoin('post.medias', 'media')
+                .innerJoin('post.settings', 'settings')
                 .innerJoin('post.user', 'user')
                 .innerJoin('user.profile', 'profile')
                 .select(['post', 'media', 'user.id', 'profile.avatar', 'profile.name', 'profile.username'])
                 .where('profile.premium = true')
+                .andWhere('settings.isPublic = true')
                 .orderBy('post.createdAt', 'DESC')
 
             return await paginate(queryBuilderForPremium, options)
@@ -188,6 +197,8 @@ export class PostsService {
 
         queryBuilder
             .innerJoinAndSelect('post.medias', 'media')
+            .innerJoin('post.settings', 'settings')
+            .where('settings.isPublic = true')
             .orderBy('post.createdAt', 'DESC')
 
         const result = await paginate(queryBuilder, options)
@@ -235,7 +246,7 @@ export class PostsService {
             throw new NotFoundException('Post not found!')
         }
 
-        
+
 
         return await this.reactionsService.savePost(userId, post)
     }
@@ -249,7 +260,7 @@ export class PostsService {
         return await this.reactionsService.unbookmark(userId, post)
     }
 
-    async commentOnPost(userId: number, postId: number, cmt: NewCommentDto): Promise<MessageDto> {        
+    async commentOnPost(userId: number, postId: number, cmt: NewCommentDto): Promise<MessageDto> {
         const post = await this.postsRepository.findOne({ where: { id: postId }, relations: ['user', 'user.profile'] })
         if (!post) {
             throw new NotFoundException('Post not found!')
@@ -262,5 +273,20 @@ export class PostsService {
         await this.postsRepository.update({ id: post.id }, { commentsCount: ++post.commentsCount })
 
         return { message: `You have commented on this post successfully` }
+    }
+
+    async changePostSettings(userId: number, postId: number, settings: PostSettingDto): Promise<MessageDto> {
+        const post = await this.postsRepository.findOne({
+            where: { id: postId, user: { id: userId } },
+            relations: ['settings']
+        })
+
+        if (!post) {
+            throw new NotFoundException('Post not found!')
+        }
+
+        await this.postSettingsRepository.update({ id: post.settings.id }, settings)
+
+        return { message: `Post settings updated` }
     }
 }

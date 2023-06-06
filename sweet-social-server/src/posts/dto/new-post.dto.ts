@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
 import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
-class NewPostSettingDto {
+export class PostSettingDto {
     @ApiPropertyOptional({ default: true })
     @IsOptional()
     @Transform(({ value }) => Boolean(value))
@@ -22,7 +22,7 @@ class NewPostSettingDto {
     showLikeAndViewCounts?: boolean
 }
 
-export class NewPostDto extends NewPostSettingDto {
+export class NewPostDto extends PostSettingDto {
     @ApiProperty()
     @IsString()
     caption: string
