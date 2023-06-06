@@ -6,6 +6,7 @@ import { useUser } from "../../../User/contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import { removePost } from "../../services/remove.post";
 import { usePostViewer } from "../../contexts/PostViewer";
+import { changePostVisibility } from "../../services/change-post-settings";
 
 interface PostSettingProps {
     post: PostDetail
@@ -44,6 +45,20 @@ const PostSetting: FunctionComponent<PostSettingProps> = ({ post }) => {
         }
     }
 
+    const handleChangeVisibility = async () => {
+        try {
+            const currentVisibility = post.settings.isPublic
+            await changePostVisibility(post.id, !currentVisibility)
+
+            setIsModalOpen(false);
+            closePost()
+            message.success('Post settings was changed !')
+        } catch (error: any) {
+            message.error(error.response?.data?.message || `An error occurred: ${error.message}`)
+        }
+    }
+    
+
     return (
         <div className="post-settings">
             <Button className="open-btn" type="link" onClick={showModal}>•••</Button>
@@ -67,6 +82,14 @@ const PostSetting: FunctionComponent<PostSettingProps> = ({ post }) => {
                         >
                             <Button className="setting-btn" danger type="text" size="large">Remove post</Button>
                         </Popconfirm>
+                    )
+                    : null
+                }
+                {user?.profile.username === post.user.profile.username
+                    ? (
+                        <Button className="setting-btn" type="text" size="large" onClick={handleChangeVisibility}>
+                            {post.settings.isPublic ? "Make private" : "Make public"}
+                        </Button>
                     )
                     : null
                 }

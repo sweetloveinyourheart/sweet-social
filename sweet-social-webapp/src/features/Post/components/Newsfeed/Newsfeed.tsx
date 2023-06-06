@@ -3,7 +3,7 @@ import { getNewsfeedPosts } from "../../services/newsfeed-post";
 import { PostDetail } from "../../services/get-post";
 import "../../styles/Newfeed.scss"
 import NewfeedPost from "./NewfeedPost";
-import { Skeleton } from "antd";
+import { Empty, Skeleton } from "antd";
 
 interface NewsfeedProps { }
 
@@ -43,6 +43,10 @@ const Newsfeed: FunctionComponent<NewsfeedProps> = () => {
                     {posts.map((post, index) => (
                         <NewfeedPost post={post} key={`newsfeed-post_${index}`} />
                     ))}
+                    {posts.length == 0
+                        ? <Empty description="Nothing here! You can follow some user first to see their posts" />
+                        : null
+                    }
                 </div>
             )
     );

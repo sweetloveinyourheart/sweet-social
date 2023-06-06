@@ -10,6 +10,11 @@ export interface PostDetail extends Post {
             name: string,
             avatar: string,
         }
+    },
+    settings: {
+        canComment: boolean, 
+        isPublic: boolean, 
+        showLikeAndViewCounts: boolean
     }
 }
 
