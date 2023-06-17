@@ -2,7 +2,6 @@ import { Alert, Button, Divider, Form, Input, Typography } from "antd";
 import { FunctionComponent, useEffect, useState } from "react";
 import "../styles/Auth.scss"
 import Logo from "../../../components/Logo/Logo";
-import { GoogleCircleFilled } from '@ant-design/icons';
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import PageLoading from "../../../components/Loading/PageLoading";
