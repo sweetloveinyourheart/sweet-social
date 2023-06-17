@@ -5,11 +5,20 @@ import { AuthDto, RefreshTokenDto, SignOutDto } from './dto/auth.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import { MessageDto } from '../common/dto/message.dto';
+import { OAuthDto } from './dto/oauth.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('oauth')
+  @ApiOperation({ summary: 'Login with google (OAuth)' })
+  @ApiResponse({ type: AuthDto, status: 200 })
+  oauth(@Body() oauthDto: OAuthDto): Promise<AuthDto> {
+    return this.authService.oauth(oauthDto.token);
+  }
 
   @HttpCode(HttpStatus.OK)
   @Post('sign-in')
