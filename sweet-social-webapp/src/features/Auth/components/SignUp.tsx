@@ -6,6 +6,7 @@ import { GoogleCircleFilled } from '@ant-design/icons';
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import PageLoading from "../../../components/Loading/PageLoading";
+import OAuth from "./OAuth";
 
 interface SignUpProps { }
 
@@ -17,7 +18,7 @@ const SignUp: FunctionComponent<SignUpProps> = () => {
     const { register, error, loading, accessToken } = useAuth()
 
     useEffect(() => {
-        if(accessToken) {
+        if (accessToken) {
             navigate('/')
         }
 
@@ -30,7 +31,7 @@ const SignUp: FunctionComponent<SignUpProps> = () => {
         navigate('/auth/new-account')
     };
 
-    if(loading || componentLoading) return <PageLoading />
+    if (loading || componentLoading) return <PageLoading />
 
     return (
         <>
@@ -49,9 +50,7 @@ const SignUp: FunctionComponent<SignUpProps> = () => {
                     </Typography.Paragraph>
                 </Form.Item>
                 <Form.Item>
-                    <Button className="oauth-btn" icon={<GoogleCircleFilled />}>
-                        Login with Google
-                    </Button>
+                    <OAuth loading={loading} />
                 </Form.Item>
                 <Divider style={{ color: "#777", fontSize: 13 }}>OR</Divider>
                 <Form.Item
