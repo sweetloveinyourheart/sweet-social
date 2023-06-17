@@ -9,6 +9,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - VITE_BASE_URL=http://localhost:9000
+      - VITE_GOOGLE_OAUTH_CLIENT_ID=<YOUR_GOOGLE_OAUTH_CLIENT_ID>
     ports:
       - '5173:5173'
     networks:
@@ -37,6 +38,10 @@ services:
 
       - GCP_PROJECT_ID=<YOUR_GCP_PROJECT_ID>
       - GCP_BUCKET_NAME=<YOUR_GCP_BUCKET_NAME>
+
+      - GOOGLE_CLIENT_ID=<YOUR_GOOGLE_OAUTH_CLIENT_ID>
+      - GOOGLE_CLIENT_SECRET=<YOUR_GOOGLE_OAUTH_CLIENT_SECRET>
+      
     ports:
       - '9000:9000'
     networks:
