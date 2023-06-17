@@ -15,6 +15,10 @@ export interface SigninBody {
     password: string,
 }
 
+export interface OAuthBody {
+    token: string
+}
+
 interface AuthResponse {
     accessToken: string
     refreshToken: string
@@ -28,6 +32,12 @@ export async function signup(body: SignupBody): Promise<AuthResponse> {
     const { data } = await axios.post(`${BASE_URL}/auth/sign-up`, body)
     return data
 }
+
+export async function oauth(body: OAuthBody): Promise<AuthResponse> {
+    const { data } = await axios.post(`${BASE_URL}/auth/oauth`, body)
+    return data
+}
+
 
 export async function signin(body: SigninBody): Promise<AuthResponse> {
     const { data } = await axios.post(`${BASE_URL}/auth/sign-in`, body)

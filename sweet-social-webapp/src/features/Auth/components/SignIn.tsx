@@ -2,9 +2,9 @@ import { Alert, Button, Divider, Form, Input, Typography } from "antd";
 import { FunctionComponent, useEffect, useState } from "react";
 import Logo from "../../../components/Logo/Logo";
 import { Link, useNavigate } from "react-router-dom";
-import { GoogleCircleFilled } from '@ant-design/icons';
 import { useAuth } from "../contexts/AuthContext";
 import PageLoading from "../../../components/Loading/PageLoading";
+import OAuth from "./OAuth";
 
 interface SignInProps {
 
@@ -84,15 +84,7 @@ const SignIn: FunctionComponent<SignInProps> = () => {
                 }
                 <Divider style={{ color: "#777", fontSize: 13 }}>OR</Divider>
                 <Form.Item>
-                    <Button 
-                        type="link" 
-                        htmlType="button" 
-                        className="oauth-btn-link" 
-                        icon={<GoogleCircleFilled />}
-                        disabled={loading}
-                    >
-                        Login with Google
-                    </Button>
+                    <OAuth loading={loading}/>
                 </Form.Item>
             </Form>
 

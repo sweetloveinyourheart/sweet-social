@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { clearRefreshToken, getRefreshToken, saveRefreshToken } from "../utils/cookies";
 import axios from "axios";
-import { SigninBody, SignupBody, refreshToken, signin, signout, signup } from "../services/auth";
+import { OAuthBody, SigninBody, SignupBody, oauth, refreshToken, signin, signout, signup } from "../services/auth";
 import PageLoading from "../../../components/Loading/PageLoading";
 
 interface Auth {
@@ -9,6 +9,7 @@ interface Auth {
     error: string | null,
     loading: boolean,
     login: (user: SigninBody) => Promise<boolean>,
+    googleLogin: (user: OAuthBody) => Promise<boolean>,
     register: (newUser: SignupBody) => Promise<boolean>,
     logout: () => Promise<void>
 }
@@ -28,6 +29,24 @@ export default function AuthProvider({ children }: { children: any }) {
         try {
             setLoading(true)
             const { accessToken, refreshToken } = await signin(user)
+
+            setError(null)
+            axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+            setAccessToken(accessToken)
+            saveRefreshToken(refreshToken)
+            return true
+        } catch (error: any) {
+            setError(error.response?.data?.message || `An error occurred: ${error.message}`)
+            return false
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
+    const googleLogin = useCallback(async (user: OAuthBody) => {
+        try {
+            setLoading(true)
+            const { accessToken, refreshToken } = await oauth(user)
 
             setError(null)
             axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
@@ -64,6 +83,7 @@ export default function AuthProvider({ children }: { children: any }) {
         setAccessToken(null)
         const rfToken = getRefreshToken()
         if (rfToken) await signout(rfToken)
+
         clearRefreshToken()
     }, [])
 
@@ -119,6 +139,7 @@ export default function AuthProvider({ children }: { children: any }) {
         loading,
         error,
         login,
+        googleLogin,
         register,
         logout
     }), [accessToken, loading, error])
