@@ -15,6 +15,6 @@ export class PostSettings {
     @Column({ default: true })
     showLikeAndViewCounts: boolean
 
-    @OneToOne(() => Post, post => post.settings, { onDelete: 'CASCADE' })
+    @OneToOne(() => Post, post => post.settings)
     post: Post
 }

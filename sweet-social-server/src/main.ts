@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('v1/api');
   app.enableCors({})
-  app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalPipes(new ValidationPipe({ transform: true }))
 
   const config = new DocumentBuilder()
     .setTitle('Sweet Social API Docs')
@@ -15,7 +15,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addBearerAuth()
     .build();
-    
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('v1/api-docs', app, document);
 

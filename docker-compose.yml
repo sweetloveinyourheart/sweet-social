@@ -10,6 +10,7 @@ services:
     environment:
       - VITE_BASE_URL=https://sweetdev.site/v1/api
       - VITE_GOOGLE_OAUTH_CLIENT_ID=<YOUR_GOOGLE_OAUTH_CLIENT_ID>
+      - VITE_SOCKET_URL=https://sweetdev.site/socket
     ports:
       - '5173:5173'
     networks:

@@ -166,7 +166,7 @@ export class PostsService {
             .innerJoin('user.profile', 'profile')
             .innerJoin('user.followers', 'followers') // join with follower table to find following user's posts
             .innerJoin('followers.followerUser', 'fuser')
-            .select(['post', 'media', 'user.id', 'profile.avatar', 'profile.name', 'profile.username'])
+            .select(['post', 'media', 'settings', 'user.id', 'profile.avatar', 'profile.name', 'profile.username'])
             .where('fuser.id = :userId', { userId }) // match where user id exist on the followers list of post owner
             .andWhere('settings.isPublic = true')
             .orderBy('post.createdAt', 'DESC')
@@ -181,7 +181,7 @@ export class PostsService {
                 .innerJoin('post.settings', 'settings')
                 .innerJoin('post.user', 'user')
                 .innerJoin('user.profile', 'profile')
-                .select(['post', 'media', 'user.id', 'profile.avatar', 'profile.name', 'profile.username'])
+                .select(['post', 'media', 'settings', 'user.id', 'profile.avatar', 'profile.name', 'profile.username'])
                 .where('profile.premium = true')
                 .andWhere('settings.isPublic = true')
                 .orderBy('post.createdAt', 'DESC')

@@ -30,7 +30,7 @@ export class Post {
     @OneToMany(() => Media, media => media.post, { cascade: true })
     medias: Media[]
 
-    @OneToOne(() => PostSettings, settings => settings.post, { cascade: true })
+    @OneToOne(() => PostSettings, settings => settings.post, { cascade: true, onDelete: 'CASCADE' })
     @JoinColumn()
     settings: PostSettings
 
