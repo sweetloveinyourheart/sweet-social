@@ -13,6 +13,7 @@ import Emoji from "../../../components/Emoji/Emoji";
 interface ChatProps { }
 
 const Chat: FunctionComponent<ChatProps> = () => {
+    const [currentChatbox, setCurrentChatbox] = useState<string>("")
     const [info, setInfo] = useState<ChatboxInfo | null>(null)
     const [messages, setMessages] = useState<ChatboxMessage[]>([])
     const [content, setContent] = useState<string>("")
@@ -32,26 +33,47 @@ const Chat: FunctionComponent<ChatProps> = () => {
     const messagesEndRef = createRef<HTMLDivElement>()
 
     const fetchMessages = async () => {
-        const msgData = await getChatboxMessages(chatboxId, pagination.page, pagination.limit)
+        if (currentChatbox === chatboxId) {
+            // Fetch more if the chat box id not change
+            const msgData = await getChatboxMessages(chatboxId, pagination.page, pagination.limit)
 
-        const reverseMsgData = msgData.items.reverse()
-        setMessages(s => [...reverseMsgData, ...s])
+            const reverseMsgData = msgData.items.reverse()
+            setMessages(s => [...reverseMsgData, ...s])
 
-        setPagination(s => ({
-            ...s,
-            page: ++s.page,
-            totalPages: msgData.meta.totalPages
-        }))
+            setPagination(s => ({
+                ...s,
+                page: ++s.page,
+                totalPages: msgData.meta.totalPages
+            }))
+        } else {
+            // If the box chat id change, refetch start at page 1
+
+            const msgData = await getChatboxMessages(chatboxId, 1, pagination.limit)
+
+            const reverseMsgData = msgData.items.reverse()
+            setMessages(reverseMsgData)
+
+            setPagination({
+                page: 1,
+                limit: 25,
+                totalPages: msgData.meta.totalPages
+            })
+        }
     }
+
+    console.log(pagination);
+    
 
     useEffect(() => {
         (async () => {
             try {
                 setLoadingPrevious(true)
+
                 const data = await getChatboxInfo(chatboxId)
                 setInfo(data)
 
                 await fetchMessages()
+                setCurrentChatbox(chatboxId)
 
             } catch (error) {
                 message.error("An error has occurred !")
@@ -80,7 +102,7 @@ const Chat: FunctionComponent<ChatProps> = () => {
             socket.emit('leave-chatbox', { chatboxId })
         }
 
-    }, [])
+    }, [chatboxId])
 
     useEffect(() => {
         // Scroll to bottom
@@ -137,9 +159,9 @@ const Chat: FunctionComponent<ChatProps> = () => {
 
             // Calculate the number of days
             let daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
-            
+
             const canShowDiff = () => {
-                if(daysDiff !== currDiff) {
+                if (daysDiff !== currDiff) {
                     currDiff = daysDiff
                     return true
                 }
@@ -148,7 +170,7 @@ const Chat: FunctionComponent<ChatProps> = () => {
             }
 
             return (
-                <div key={`chat-msg_${index}`}>  
+                <div key={`chat-msg_${index}`}>
                     {canShowDiff()
                         ? <Divider className="days-diff">{moment(lastDate).fromNow()}</Divider>
                         : null
@@ -187,7 +209,7 @@ const Chat: FunctionComponent<ChatProps> = () => {
                 <form className="chat-form" onSubmit={onSendMessage}>
                     <Row>
                         <Col span={3}>
-                            <Emoji onEmojiClick={(emoji) => setContent(s => s+emoji)} />
+                            <Emoji onEmojiClick={(emoji) => setContent(s => s + emoji)} />
                         </Col>
                         <Col span={18}>
                             <Input

@@ -95,22 +95,6 @@ const PostDetail: FunctionComponent<PostDetailProps> = ({ isOpen, handleClose, p
                                         ))
                                     )
                                 }
-                                {loading
-                                    ? <Skeleton active />
-                                    : (
-                                        comments.map((cmt, index) => (
-                                            <Comment cmt={cmt} key={`cmt_${index}`} />
-                                        ))
-                                    )
-                                }
-                                {loading
-                                    ? <Skeleton active />
-                                    : (
-                                        comments.map((cmt, index) => (
-                                            <Comment cmt={cmt} key={`cmt_${index}`} />
-                                        ))
-                                    )
-                                }
                             </div>
                         </div>
                         <div className="detail__footer">

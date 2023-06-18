@@ -1,10 +1,8 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateProfileDto } from './create-user.dto';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsOptional, Length, ValidateNested } from 'class-validator';
+import { IsEnum, IsOptional, Length } from 'class-validator';
 import { Gender } from '../entities/profile.entity';
 
-export class UpdateProfileDto {
+export class UpdateProfileDto  {
     @ApiPropertyOptional()
     @IsOptional()
     @Length(3, 50)

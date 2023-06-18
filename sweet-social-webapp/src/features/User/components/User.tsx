@@ -7,6 +7,7 @@ import PersonalPosts from "../../Post/components/PersonalPosts/PersonalPosts";
 import { UserProfile, getUserProfile } from "../services/user";
 import PageLoading from "../../../components/Loading/PageLoading";
 import { connectToSingleChatbox } from "../../Messages/services/connect-chatbox";
+import { useUser } from "../contexts/UserContext";
 
 interface UserProps { }
 
@@ -28,6 +29,7 @@ const User: FunctionComponent<UserProps> = () => {
 
     const navigate = useNavigate()
     const { username } = useParams()
+    const { user: appUser } = useUser()
 
     useEffect(() => {
         if (!username) {
@@ -44,7 +46,7 @@ const User: FunctionComponent<UserProps> = () => {
                 setLoading(false)
             }
         })()
-    }, [])
+    }, [username])
 
     const onMakeConversation = async () => {
         try {
@@ -75,14 +77,19 @@ const User: FunctionComponent<UserProps> = () => {
                         <Typography.Title level={3}>
                             {user?.profile.username}
                         </Typography.Title>
-                        <Button 
-                            type="primary" 
-                            style={{ color: "#fff" }} 
-                            onClick={onMakeConversation}
-                            icon={<MessageOutlined />}
-                        >
-                            Chat
-                        </Button>
+                        {user?.profile.username !== appUser?.profile.username
+                            ? (
+                                <Button
+                                    type="primary"
+                                    style={{ color: "#fff" }}
+                                    onClick={onMakeConversation}
+                                    icon={<MessageOutlined />}
+                                >
+                                    Chat
+                                </Button>
+                            )
+                            : null
+                        }
                     </div>
                     <div className="profile-count">
                         <div className="counter">
