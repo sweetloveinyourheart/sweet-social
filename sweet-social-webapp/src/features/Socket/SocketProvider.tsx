@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import { Socket, io } from "socket.io-client";
-import { BASE_URL } from "../../constants/base-url";
 import { useAuth } from "../Auth/contexts/AuthContext";
+import { SOCKET_URL } from "../../constants/socket-url";
 
 interface SocketWrapper {
     socket: Socket
@@ -16,7 +16,7 @@ export function useSocket() {
 export default function SocketProvider({ children }: { children: any }) {
     const { accessToken } = useAuth()
     
-    const socket = io(`${BASE_URL}`, { extraHeaders: {
+    const socket = io(`${SOCKET_URL}`, { extraHeaders: {
         Authorization: `Bearer ${accessToken}`, 
     } })
 
