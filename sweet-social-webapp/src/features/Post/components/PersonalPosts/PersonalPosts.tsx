@@ -30,7 +30,7 @@ const PersonalPosts: FunctionComponent<PersonalPostsProps> = ({ username }) => {
                 totalPages: data.meta.totalPages
             }))
         })()
-    }, [pagination.page])
+    }, [pagination.page, username])
 
     const renderPosts = () => {
         return posts.map((post, index) => (
