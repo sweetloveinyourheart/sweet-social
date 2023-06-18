@@ -107,8 +107,13 @@ export class AuthService {
             const name = "Sweet User"
             const username = this.generateRandomUsername()
 
-            const newAccount: SignUpDto = { email, password, profile: { name, username } }
-            return await this.signUp(newAccount)
+            // create new user
+            const user: SignUpDto = { email, password, profile: { name, username } }
+            const newUser = await this.usersService.create(user);
+
+            const payload = { sub: newUser.id, username: newUser.profile.username, role: newUser.role };
+            const { accessToken, refreshToken } = await this.generateTokens(payload)
+            return { accessToken, refreshToken }
         }
 
         const payload = { sub: existingAccount.id, username: existingAccount.profile.username, role: existingAccount.role };
