@@ -8,7 +8,7 @@ services:
       context: sweet-social-webapp
       dockerfile: Dockerfile
     environment:
-      - VITE_BASE_URL=http://localhost:9000
+      - VITE_BASE_URL=https://sweetdev.site/v1/api
       - VITE_GOOGLE_OAUTH_CLIENT_ID=<YOUR_GOOGLE_OAUTH_CLIENT_ID>
     ports:
       - '5173:5173'
@@ -30,7 +30,7 @@ services:
       - POSTGRESQL_DB=sweet-social
 
       - JWT_SECRET=jwtsecret
-      - CLIENT_URL=http://localhost:5173
+      - CLIENT_URL=https://sweetdev.site
 
       - EMAIL_HOST=<YOUR_SENDGRID_EMAIL_HOST>
       - EMAIL_USER=<YOUR_SENDGRID_EMAIL_KEY>
@@ -60,7 +60,21 @@ services:
       - db-data:/var/lib/postgresql/data
 
     ports:
-      - '5431:5432'
+      - '5432:5432'
+    networks:
+      - shared-network
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+      
+    depends_on:
+      server:
+        condition: service_started
+
     networks:
       - shared-network
 
