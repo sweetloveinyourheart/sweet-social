@@ -108,7 +108,7 @@ export class AuthService {
             const username = this.generateRandomUsername()
 
             // create new user
-            const user: SignUpDto = { email, password, profile: { name, username } }
+            const user = { email, password, profile: { name, username }, isVerified: true }
             const newUser = await this.usersService.create(user);
 
             const payload = { sub: newUser.id, username: newUser.profile.username, role: newUser.role };
