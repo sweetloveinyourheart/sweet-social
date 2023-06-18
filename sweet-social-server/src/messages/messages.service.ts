@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ChatBox } from './entities/Chatbox.entity';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Message } from './entities/Message.entity';
 import { SingleChatboxDto, SingleConnectDto } from './dto/connect-chatbox.dto';
 import { v4 as uuidv4 } from 'uuid';
@@ -20,23 +20,23 @@ export class MessagesService {
     async connectToSingleChatbox(userId: number, boxToConnent: SingleConnectDto): Promise<SingleChatboxDto> {
         const { recipientId } = boxToConnent
 
-        const querybuilder = this.chatboxesRepository.createQueryBuilder('chatbox')
+        const querybuilder = this.chatboxesRepository.createQueryBuilder('chatbox');
         const chatbox = await querybuilder
             .leftJoinAndSelect('chatbox.members', 'members')
-            .where('members.id IN (:userId, :recipientId)', { userId, recipientId })
-            .andWhere((subQuery) => {
-                const subQueryAlias = subQuery // find the chatbox with only 2 members (single chat)
+            .where((subQuery) => {
+                const subQueryAlias = subQuery
                     .subQuery()
                     .select('cb.chatboxId')
                     .from('ChatBox', 'cb')
                     .innerJoin('cb.members', 'm')
+                    .where('m.id IN (:userId, :recipientId)', { userId, recipientId })
                     .groupBy('cb.chatboxId')
                     .having('COUNT(m) = 2')
                     .getQuery();
 
                 return `chatbox.chatboxId IN ${subQueryAlias}`;
             })
-            .getOne()
+            .getOne();
 
         if (chatbox) {
             return { chatboxId: chatbox.chatboxId }
@@ -182,7 +182,7 @@ export class MessagesService {
     }
 
     async deleteConversation(userId: number, chatboxId: string): Promise<MessageDto> {
-        const conversation = await this.chatboxesRepository.findOne({ 
+        const conversation = await this.chatboxesRepository.findOne({
             relations: ['members'],
             where: {
                 chatboxId,
@@ -190,8 +190,8 @@ export class MessagesService {
                     id: userId
                 }
             }
-         })
-        if(!conversation) {
+        })
+        if (!conversation) {
             throw new NotFoundException('Conversation not found !')
         }
 
