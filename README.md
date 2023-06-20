@@ -9,18 +9,18 @@ Built with:
 
 ### Installation
 
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
+To install and run the application, follow the steps below:
 
-1. Clone the repo
+1. Clone the repository to your local machine:
    ```sh
    git clone https://github.com/Sweetloveinyourheart/sweet-social
    ```
-2. Enter API keys and GCP configs in docker-compose.yml file
-3. Build with docker-compose
+2. Enter the required API keys and Google Cloud Platform (GCP) configurations in the docker-compose.yml file.
+3. Build the application using docker-compose:
    ```sh
    docker-compose build
    ```
-3. Run application with docker-compose
+3. Run the application using docker-compose:
    ```sh
    docker-compose up -d
    ```
