@@ -16,6 +16,10 @@ _Below is an example of how you can instruct your audience on installing and set
    git clone https://github.com/Sweetloveinyourheart/sweet-social
    ```
 2. Enter API keys and GCP configs in docker-compose.yml file
+3. Build with docker-compose
+   ```sh
+   docker-compose build
+   ```
 3. Run application with docker-compose
    ```sh
    docker-compose up -d
